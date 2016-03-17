@@ -1,0 +1,17 @@
+*.iml
+*/target
+*.idea
+data/*
+logs/*
+server/data/*
+server/logs/*
+server/log/*
+client/logs/*
+client/data/*
+replica/logs/*
+replica/data/*
+transport/logs/*
+objectquery/logs/*
+target/*
+server/.meta*
+*.log
