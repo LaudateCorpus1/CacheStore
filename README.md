@@ -24,11 +24,7 @@ So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.
 ## Documentation
 
 * User Guides:
-  * [Java Usage and XML Configuration](http://github.specificmedia.local/cachestore/cachestore/wiki/Java-Usage-and-XML-Configuration)
-  * [Remote CacheStore](http://github.specificmedia.local/vindico/cachestore/wiki/Remote)
-  * [Cluster CacheStore](http://github.specificmedia.local/vindico/cachestore/wiki/Cluster)
-  * [CacheStore Shell](http://github.specificmedia.local/vindico/cachestore/wiki/CacheStore-Shell)
-  * [Object Query](http://github.specificmedia.local/vindico/cachestore/wiki/Object-Query)
+  * In Progress
 
 ## Download
 
@@ -85,8 +81,8 @@ The source code is available under the Apache 2.0 license. We are actively looki
 ## Credits and Acknowledgements
 [CacheStore Creator: Mickey Hsieh]
 
-[Technical Writer: Lester Pi supervised Mike Yang and Mickey Hsieh] 
+[Technical Writer: Lester Pi supervised by Mike Yang and Mickey Hsieh] 
 
-[Open-source Admin: Lester Pi supervised Mike Yang and Mickey Hsieh]
+[Open-source Admin: Lester Pi supervised by Mike Yang and Mickey Hsieh]
 
 [QA/Test: Data Team @ Viant, Inc.]
