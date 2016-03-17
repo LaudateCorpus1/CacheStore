@@ -32,13 +32,13 @@ So why choose CacheStore? Take a look at our overview here: [CacheStore Overview
 
 ## Download
 
-* CacheStore Code Base: http://github.specificmedia.local/vindico/cachestore
-* Remote CacheStore Packager: http://github.specificmedia.local/vindico-vmc/cachestore-packager
-* Cluster CacheStore Packager: http://github.specificmedia.local/vindico-vmc/cachestore-packager-cluster
+* CacheStore Code Base: https://github.com/viant/CacheStore
+* Remote CacheStore Package: https://github.com/viant/CacheStore-deploy
+* Cluster CacheStore Package: https://github.com/viant/CacheStore-deploy-cluster
 
 ## Latest Version
 
-CacheStore Code Base: http://github.specificmedia.local/vindico/cachestore
+CacheStore Code Base: https://github.com/viant/CacheStore
 
 ## Copyright and Licensing
 
