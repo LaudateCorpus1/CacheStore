@@ -139,7 +139,7 @@ public class ClusterStoreServer implements Service {
             return dataPath;
         else {
             if ( dataPath.length() == 0)
-                return "./";
+                return "./data";
             else
                 return "./"+dataPath+"/" ;
         }
@@ -147,7 +147,7 @@ public class ClusterStoreServer implements Service {
 
     protected void startAdminStore() {
         logger.info("load admin store ...");
-        AdminClusterStore adminStore = new AdminClusterStore(ADMIN_FILENAME, serializer, findPath(serverConfig.getDataPath()+"/admin"), false,
+        AdminClusterStore adminStore = new AdminClusterStore(ADMIN_FILENAME, serializer, findPath(serverConfig.getDataPath()), false,
                 null, 0,  serverConfig.findClusterNodes(clusterNo));
         // put clusterNodesList and storeConfigList into adminStore
         //setServerConfig will trigger setList()

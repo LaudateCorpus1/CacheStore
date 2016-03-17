@@ -53,6 +53,9 @@ public class ClusterServer {
         NodeConfig nodeConfig = getNodeConfig( configPath+"/node.properties");
         //int clusterNo = Integer.valueOf( paras[0]);
         String dataPath = paras[2];
+        if ( dataPath.length() == 0 ) {
+            dataPath = "./data";
+        }
         int port = Integer.valueOf( paras[3]);
         int replicaPort = Integer.valueOf(paras[4]);
         //get from command line, if not form nodeConfig
