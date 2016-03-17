@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Cachestore : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Java Usage and XML Configuration</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/viant/CacheStore">View on GitHub</a>
+
+          <h1 id="project_title">Cachestore</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/viant/CacheStore/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/viant/CacheStore/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="what-is-cachestore" class="anchor" href="#what-is-cachestore" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is CacheStore?</h2>
+
+<p>CacheStore is a key-value hybrid storage system between memory cache and disk. It is high performance, horizontal scale and high availability. It was developed to support real time auction and high performance ad serving systems.</p>
+
+<h2>
+<a id="motivation" class="anchor" href="#motivation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Motivation</h2>
+
+<ul>
+<li>Originally, it was contributed as a storage plug-in for Project Voldemort, but we decided to start it as a stand alone distributed system</li>
+<li>Better "Fail-Safe" mechanism in a distributed system without compromising performance
+
+<ul>
+<li>Utilize Memory and Disk</li>
+<li>Server side replication</li>
+</ul>
+</li>
+<li>Ability to store data as Objects or Primitives</li>
+</ul>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
+<ol>
+<li>High performance.
+
+<ul>
+<li>Random access in a few milliseconds per record</li>
+</ul>
+</li>
+<li>Three types of deployment.
+
+<ul>
+<li>Local (embedded in Java)</li>
+<li>Remote</li>
+<li>Cluster (distributed)</li>
+</ul>
+</li>
+<li>Rich API.
+
+<ul>
+<li>Single operation (get, put, insert and remove).</li>
+<li>Bulk operations  (multiGet, multiPut and multiRemove).</li>
+<li>Range scans for sorted stores. </li>
+<li>Server side cursor support for range scans, key iterators and key-value pairs.</li>
+<li>Customize stored procedures both in Java and Groovy (for dynamic deployment).</li>
+<li>Customize before and after triggers for get, put and remove in Java and Groovy. </li>
+<li>Query support for select and update statement with index search optimization. </li>
+</ul>
+</li>
+<li>Supports sorted-map and hash-map stores with configuration change during system Bootstrap.</li>
+<li>Groovy command line shell for query statement and API interaction.</li>
+<li>Plug-in replication listener for heterogeneous storage RDBM persistence with support of computing delta between different versions.</li>
+<li>Server side serialization 
+
+<ul>
+<li>Get, put, and scan operations support query parameters to reduce payload between client and server.</li>
+</ul>
+</li>
+<li>Currently supports Java and Groovy.
+
+<ul>
+<li>PHP support in beta and other language support in development.</li>
+</ul>
+</li>
+<li>Map Reducer currently in development.</li>
+</ol>
+
+<h2>
+<a id="architecture" class="anchor" href="#architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture</h2>
+
+<p>CacheStore is a key-value system; it consists of two components; the in memory map (sorted or hash) and the persistence storage system. During the Bootstrap process, it loads all keys and meta data into the memory map. All values are lazy loaded from disk upon incoming request. It is implemented as a write-through cache and writes are durable. All values can be swapped between storage and memory. Data is replicated across designated nodes to assure reliability and the inclusion of clusters allows for load balancing. Nodes within clusters are homogeneous and are interchangeable. The bulk operation, range scan, cursor and query engine are built on top of the core system.</p>
+
+<h2>
+<a id="performance" class="anchor" href="#performance" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Performance</h2>
+
+<p>This is a high performance distributed storage system with replication on multiple nodes that is able to access keys from cached memory. Because of this, performance can be affected by, but not limited to, memory cache size, data size on node, and replication factor.</p>
+
+<h2>
+<a id="memory" class="anchor" href="#memory" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Memory</h2>
+
+<p>CacheStore is unique because it is a hybrid storage system between memory cache and disk. This allows CacheStore to access data cached in memory with extremely high performance. Before the keys are cached into memory, however, it must first be bootstrapped from disk to memory. Once the keys are cached into memory, they can be accessed in nanoseconds. CacheStore uses a write-through cache to write synchronously to the cache as well as the backing store.</p>
+
+<h2>
+<a id="storage" class="anchor" href="#storage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Storage</h2>
+
+<p>Key-value storage is handled on the server side with all keys being written into the server disk with data correlating to each store. CacheStore is able to store multiple Java key types including Java primitives and objects.</p>
+
+<p>Data for each store is saved into three unique files, extensions .key, .ndx, and .data, that work together to handle the data. The .key file stores information about the keys. The .ndx file links the keys to the values, which are stored in the .data file. As data is written, erased, and rewritten to the .data file, the .ndx file will update accordingly to point to the correct blocks in the .data file. Occasional data purging and compaction are recommended for regular maintenance routine via JMX.</p>
+
+<h2>
+<a id="cluster" class="anchor" href="#cluster" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cluster</h2>
+
+<p>Clustering can be used for stores to increase performance and reliability. A multinode cluster can support data replication and load balancing to prevent "hot spots" from occurring.</p>
+
+<h2>
+<a id="replication" class="anchor" href="#replication" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Replication</h2>
+
+<p>Replication is supported by remote and clustered servers and eliminates downtime for fail over procedures.</p>
+
+<h2>
+<a id="query" class="anchor" href="#query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Query</h2>
+
+<p>Full object queries, minus aggregation and joins, are supported on both primitives and objects. More query features are currently being developed.</p>
+
+<h2>
+<a id="meta-data" class="anchor" href="#meta-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Meta Data</h2>
+
+<p>As mentioned earlier, data is written synchronously to the store with writing to the cache. Data is written to server side stores defined in config/stores.xml with data being represented in the three files taking the store name with extensions .data, .key, and .ndx. Meta deta for objects is represented as java classes and must be included to correctly read and write corresponding objects.</p>
+
+<h2>
+<a id="cachestore-advantages" class="anchor" href="#cachestore-advantages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CacheStore Advantages</h2>
+
+<ul>
+<li>Hybrid of cache and disk
+
+<ul>
+<li>Access speeds of cache storage systems</li>
+<li>Reliability, storage, and features of disk storage systems</li>
+</ul>
+</li>
+<li>Server side replication
+
+<ul>
+<li>No fail over downtime</li>
+<li>Continues to replicate and synchronize if there's failure</li>
+</ul>
+</li>
+<li>Load balancing
+
+<ul>
+<li>Keys are evenly distributed among nodes</li>
+<li>Prevents hot spots from occurring</li>
+</ul>
+</li>
+<li>Access speeds in nanoseconds
+
+<ul>
+<li>Built in caching system allows extremely high performance and access speeds</li>
+</ul>
+</li>
+<li>Special functions
+
+<ul>
+<li>Full object queries</li>
+<li>Scans</li>
+<li>Cursors</li>
+<li>Store procedures</li>
+<li>Triggers</li>
+<li>Bulk operations</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="cachestore-disadvantages" class="anchor" href="#cachestore-disadvantages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CacheStore Disadvantages</h2>
+
+<ul>
+<li>Constrained by memory as trade-off for high performance
+
+<ul>
+<li>All keys must be loaded by Bootstrap</li>
+<li>Amount of keys limited by memory size</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="comparison-with-project-voldemort" class="anchor" href="#comparison-with-project-voldemort" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Comparison with Project Voldemort</h2>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="center">CacheStore</th>
+<th align="center">Voldemort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Replication</td>
+<td align="center">Yes</td>
+<td align="center">Yes</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td align="center">Built In</td>
+<td align="center">Plugin</td>
+</tr>
+<tr>
+<td>Fail Over</td>
+<td align="center">Yes</td>
+<td align="center">Yes</td>
+</tr>
+<tr>
+<td>Load Balancing</td>
+<td align="center">Yes</td>
+<td align="center">Yes</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td align="center">Simple &amp; Bulk</td>
+<td align="center">Simple</td>
+</tr>
+<tr>
+<td>Query</td>
+<td align="center">Yes</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td>Scan</td>
+<td align="center">Yes</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td align="center">Yes</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td>Stored Procedure</td>
+<td align="center">Yes</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td>Trigger</td>
+<td align="center">Yes</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td>Ordered Tables</td>
+<td align="center">Ordered &amp; Unordered</td>
+<td align="center">Unordered</td>
+</tr>
+</tbody>
+</table>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Cachestore maintained by <a href="https://github.com/viant">viant</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
