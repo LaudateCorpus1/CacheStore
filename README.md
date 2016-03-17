@@ -37,6 +37,7 @@ So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.
 * Cluster CacheStore Package: https://github.com/viant/CacheStore-deploy-cluster
 
 To get CacheStore and its modules into your own project add these dependencies to your project's pom.xml file:
+
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
         <artifactId>cachestore</artifactId>
