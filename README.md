@@ -37,41 +37,41 @@ So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.
 * Cluster CacheStore Package: https://github.com/viant/CacheStore-deploy-cluster
 
 To get CacheStore and its modules into your own project add these dependencies to your project's pom.xml file:
-	<dependency>
-		<groupId>com.viantinc.cachestore</groupId>
-		<artifactId>cachestore</artifactId>
-		<version>1.0.2</version>
-	</dependency>
-	<dependency>
-		<groupId>com.viantinc.cachestore</groupId>
-		<artifactId>client</artifactId>
-		<version>1.5.2</version>
-	</dependency>
-	<dependency>
-		<groupId>com.viantinc.cachestore</groupId>
-		<artifactId>core</artifactId>
-		<version>1.1.8</version>
-	</dependency>
-	<dependency>
-		<groupId>com.viantinc.cachestore</groupId>
-		<artifactId>server</artifactId>
-		<version>1.4.10</version>
-	</dependency>
-	<dependency>
-		<groupId>com.viantinc.cachestore</groupId>
-		<artifactId>objectquery</artifactId>
-		<version>1.3.7</version>
-	</dependency>
-	<dependency>
-		<groupId>com.viantinc.cachestore</groupId>
-		<artifactId>replica</artifactId>
-		<version>2.2.3</version>
-	</dependency>
-	<dependency>
-		<groupId>com.viantinc.cachestore</groupId>
-		<artifactId>transport</artifactId>
-		<version>2.2.0</version>
-	</dependency>
+    <dependency>
+        <groupId>com.viantinc.cachestore</groupId>
+        <artifactId>cachestore</artifactId>
+        <version>1.0.2</version>
+    </dependency>
+    <dependency>
+        <groupId>com.viantinc.cachestore</groupId>
+        <artifactId>client</artifactId>
+        <version>1.5.2</version>
+    </dependency>
+    <dependency>
+        <groupId>com.viantinc.cachestore</groupId>
+        <artifactId>core</artifactId>
+        <version>1.1.8</version>
+    </dependency>
+    <dependency>
+        <groupId>com.viantinc.cachestore</groupId>
+        <artifactId>server</artifactId>
+        <version>1.4.10</version>
+    </dependency>
+    <dependency>
+        <groupId>com.viantinc.cachestore</groupId>
+        <artifactId>objectquery</artifactId>
+        <version>1.3.7</version>
+    </dependency>
+    <dependency>
+        <groupId>com.viantinc.cachestore</groupId>
+        <artifactId>replica</artifactId>
+        <version>2.2.3</version>
+    </dependency>
+    <dependency>
+        <groupId>com.viantinc.cachestore</groupId>
+        <artifactId>transport</artifactId>
+        <version>2.2.0</version>
+    </dependency>
 
 ## Latest Version
 
