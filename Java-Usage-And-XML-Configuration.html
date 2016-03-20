@@ -7,7 +7,35 @@
     <meta name="description" content="Cachestore : ">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
+    <style type="text/css">
+        code {
+            background-color: #E8E8E8;
+            color: green;
+        }
+    </style>
+             <style>
+                OL {
+                    counter-reset: item;
+                    padding-left: 10px;
+                }
+                
+                LI {
+                    display: block
+                }
+                
+                LI:before {
+                    content: counters(item, ".") ". ";
+                    counter-increment: item
+                }
+                
+                 LI.default{
+                     display: list-item
+                 }
+                 LI.default:before{
+                     content: "";
+                         
+                 }
+            </style>
     <title>Java Usage and XML Configuration</title>
 </head>
 
@@ -35,206 +63,231 @@
             <h2>
           <a id="table-of-contents" class="anchor" href="#table-of-contents" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Table of Contents</h2>
 
-            <style>
-                OL {
-                    counter-reset: item;
-                    padding-left: 10px;
-                }
-                
-                LI {
-                    display: block
-                }
-                
-                LI:before {
-                    content: counters(item, ".") ". ";
-                    counter-increment: item
-                }
-
-            </style>
+   
             <ol>
                 <li>
-                    <a href = "#introduction">Introduction</a>
+                    <a href="#introduction">Introduction</a>
                 </li>
                 <li>
-                    <a href = "#server">Server - Remotes, Clusters, and Stores</a>
+                    <a href="#server">Server - Remotes, Clusters, and Stores</a>
                     <ol>
                         <li>
-                            <a href = "#start-remote">Start Remote</a>
+                            <a href="#start-remote">Start Remote</a>
                         </li>
                         <li>
-                            <a href = "#start-cluster">Start Cluster</a>
+                            <a href="#start-cluster">Start Cluster</a>
                         </li>
                         <li>
-                            <a href = "#triggers">Triggers</a>
+                            <a href="#triggers">Triggers</a>
                         </li>
                         <li>
-                            <a href = "#stored-procedures">Stored Procedures</a>
+                            <a href="#stored-procedures">Stored Procedures</a>
                         </li>
                         <li>
-                            <a href = "#queries">Queries</a>
+                            <a href="#queries">Queries</a>
                         </li>
                     </ol>
                 </li>
                 <li>
-                    <a href = "#client">Client - Connection and Functions</a>
+                    <a href="#client">Client - Connection and Functions</a>
                     <ol>
                         <li>
-                            <a href = "#remote-client">Creating a Remote Client</a>
+                            <a href="#remote-client">Creating a Remote Client</a>
                         </li>
                         <li>
-                            <a href = "#scan-client">Creating a Scan Client</a>
+                            <a href="#scan-client">Creating a Scan Client</a>
                         </li>
                         <li>
-                            <a href = "#cluster-client">Creating a Cluster Client</a>
+                            <a href="#cluster-client">Creating a Cluster Client</a>
                         </li>
                         <li>
-                            <a href = "#client-functions">Client Functions</a>
+                            <a href="#client-functions">Client Functions</a>
                             <ol>
                                 <li>
-                                    <a href = "#get-put">Get/Put</a>
+                                    <a href="#get-put">Get/Put</a>
                                 </li>
                                 <li>
-                                    <a href = "#removed">Remove</a>
+                                    <a href="#removed">Remove</a>
                                 </li>
                                 <li>
-                                    <a href = "#bulk-operations">Bulk Operations</a>
+                                    <a href="#bulk-operations">Bulk Operations</a>
                                 </li>
                                 <li>
-                                    <a href = "#object-query">Object Query</a>
+                                    <a href="#object-query">Object Query</a>
                                     <ol>
                                         <li>
-                                            <a href = "#object-file">Object File</a>
+                                            <a href="#object-file">Object File</a>
                                         </li>
                                     </ol>
                                 </li>
                                 <li>
-                                    <a href = "#stored-procedures-2">Stored Procedures</a>
+                                    <a href="#stored-procedures-2">Stored Procedures</a>
                                 </li>
                             </ol>
                         </li>
                         <li>
-                            <a href = "#key-sequencing">Key Sequencing</a>
+                            <a href="#key-sequencing">Key Sequencing</a>
                         </li>
                         <li>
-                            <a href = "#serialization">Serialization</a>
+                            <a href="#serialization">Serialization</a>
                             <ol>
                                 <li>
-                                    <a href = "#hessian-serialization">Hessian Serialization</a>
+                                    <a href="#hessian-serialization">Hessian Serialization</a>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
                 <li>
-                    <a href = "#config">Store and Cluster Config Files</a>
+                    <a href="#config">Store and Cluster Config Files</a>
                     <ol>
                         <li>
-                            <a href = "#store-config">Store Config</a>
+                            <a href="#store-config">Store Config</a>
                             <ol>
                                 <li>
-                                    <a href = "#stores-xml">he stores.xml File</a>
+                                    <a href="#stores-xml">he stores.xml File</a>
                                 </li>
                             </ol>
                         </li>
                         <li>
-                            <a href = "#cluster-config">Cluster Config</a>
+                            <a href="#cluster-config">Cluster Config</a>
                             <ol>
                                 <li>
-                                    <a href = "#clusters-xml">The clusters.xml File</a>
+                                    <a href="#clusters-xml">The clusters.xml File</a>
                                 </li>
                                 <li>
-                                    <a href = "#stores-xml-2">The stores.xml File</a>
+                                    <a href="#stores-xml-2">The stores.xml File</a>
                                 </li>
                                 <li>
-                                    <a href = "#node-properties">The node.properties File</a>
+                                    <a href="#node-properties">The node.properties File</a>
                                 </li>
                             </ol>
                         </li>
                     </ol>
                 </li>
                 <li>
-                    <a href = "#jmx-monitoring">JMX Monitoring</a>
+                    <a href="#jmx-monitoring">JMX Monitoring</a>
                 </li>
                 <li>
-                    <a href = "#maven">Maven</a>
+                    <a href="#maven">Maven</a>
                 </li>
             </ol>
 
             <h1>
 <a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h1>
-            <h1>
-<a id="server" class="anchor" href="#server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server - Remotes, Clusters, and Stores</h1>
+            <p>
+                CacheStore contains a robust set of features implemented in Java that can be utilized to quickly access, manipulate, and modify billions of record sets contained in "stores". CacheStore will read mainly from XML config files to determine how to configure, read, and write store data.
+            </p>
+            <p>
+                This manual will take a look into CacheStore's Java API, Java code, and XML config files. Code examples can be found at: Sanity Test Source Files
+            </p>
+            <p>
+                If you have questions about Object Query syntax, take a look at the Object Query Guide for reference.
+            </p>
+            <p>
+                Also, in our examples, we will assume a few things:
+            </p>
+            <ul>
+                <li class="default">
+                    If a variable is not shown as declared, it is assumed that it has already been declared earlier
+                </li>
+                <li class="default">
+                    If imports are not shown, it is assumed they have already been imported
+                </li>
+                <li class="default">
+                    HOST_CONNECT_URL refers to a host connection URL string. Ex. "localhost:7100"
+                </li>
+                <li class="default">
+                    STORENAME refers to the store being accessed by the client.
+                </li>
+            </ul>
+
             <h2>
-<a id="start-remote" class="anchor" href="#start-remote" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Start Remote</h2>
-            <h2>
-<a id="start-cluster" class="anchor" href="#start-cluster" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Start Cluster</h2>
-            <h2>
-<a id="triggers" class="anchor" href="#triggers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Triggers</h2>
-            <h2>
-<a id="stored-procedures" class="anchor" href="#stored-procedures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stored Procedures</h2>
-            <h2>
-<a id="queries" class="anchor" href="#quesries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Queries</h2>
+<a id="server" class="anchor" href="#server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server - Remotes, Clusters, and Stores</h2>
+            <p>
+                CacheStore can be deployed in three ways: locally, remotely, and on a cluster. The data
+within CacheStore is written and saved into what we call "stores". CacheStore servers can be started from either the provided startup scripts, custom startup scripts, or through JVM.
+            </p>
+            <h3>
+<a id="start-remote" class="anchor" href="#start-remote" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Start Remote</h3>
+            <p>
+                To start a Remote Store, make a call to RemoteScan4ReplicaServer.java's main method: <code>
+                RemoteScan4ReplicaServer.main(args)
+            </code>
+            </p>
+            <p>
+                Take note that the argument opts are <code>{"‐configPath", "‐start" }</code> and are defaulted to
+            <code>{"./config", "true"}</code> .
+            </p>
+            <h3>
+<a id="start-cluster" class="anchor" href="#start-cluster" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Start Cluster</h3>
+            <h3>
+<a id="triggers" class="anchor" href="#triggers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Triggers</h3>
+            <h3>
+<a id="stored-procedures" class="anchor" href="#stored-procedures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stored Procedures</h3>
+            <h3>
+<a id="queries" class="anchor" href="#quesries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Queries</h3>
 
 
-            <h1>
-<a id="client" class="anchor" href="#client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client - Connection and Functions</h1>
             <h2>
-<a id="remote-client" class="anchor" href="#remote-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Remote Client</h2>
-            <h2>
-<a id="scan-client" class="anchor" href="#scan-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Scan Client</h2>
-            <h2>
-<a id="cluster-client" class="anchor" href="#cluster-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Cluster Client</h2>
-            <h2>
-<a id="client-functions" class="anchor" href="#client-functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client Functions</h2>
+<a id="client" class="anchor" href="#client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client - Connection and Functions</h2>
             <h3>
-<a id="get-put" class="anchor" href="#get-put" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get/Put</h3>
+<a id="remote-client" class="anchor" href="#remote-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Remote Client</h3>
             <h3>
-<a id="remove" class="anchor" href="#remove" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Remove</h3>
+<a id="scan-client" class="anchor" href="#scan-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Scan Client</h3>
             <h3>
-<a id="bulk-operations" class="anchor" href="#bulk-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bulk Operations (multiOperations)</h3>
+<a id="cluster-client" class="anchor" href="#cluster-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Cluster Client</h3>
             <h3>
-<a id="object-query" class="anchor" href="#object-query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Query</h3>
+<a id="client-functions" class="anchor" href="#client-functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client Functions</h3>
             <h4>
-<a id="object-file" class="anchor" href="#object-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object File</h4>
+<a id="get-put" class="anchor" href="#get-put" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get/Put</h4>
+            <h4>
+<a id="remove" class="anchor" href="#remove" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Remove</h4>
+            <h4>
+<a id="bulk-operations" class="anchor" href="#bulk-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bulk Operations (multiOperations)</h4>
+            <h4>
+<a id="object-query" class="anchor" href="#object-query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Query</h4>
+            <h5>
+<a id="object-file" class="anchor" href="#object-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object File</h5>
+            <h4>
+<a id="stored-procedures" class="anchor" href="#stored-procedures-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stored Procedures</h4>
             <h3>
-<a id="stored-procedures" class="anchor" href="#stored-procedures-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stored Procedures</h3>
-            <h2>
-<a id="key-sequencing" class="anchor" href="#key-sequencing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Key Sequencing</h2>
-            <h2>
-<a id="serialization" class="anchor" href="#serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Serialization</h2>
+<a id="key-sequencing" class="anchor" href="#key-sequencing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Key Sequencing</h3>
+            <h3>
+<a id="serialization" class="anchor" href="#serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Serialization</h3>
             <h3>
 <a id="hessian-serialization" class="anchor" href="#hessian-serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hessian Serialization</h3>
-            
-            
-            <h1>
-<a id="config" class="anchor" href="#config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Store and Cluster Config Files</h1>
-            <h2>
-<a id="store-config" class="anchor" href="#store-config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Store Config</h2>
-            <h3>
-<a id="stores-xml" class="anchor" href="#stores-xml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The stores.xml File</h3>
-            <h2>
-<a id="cluster-config" class="anchor" href="#cluster-config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cluster Config</h2>
-            <h3>
-<a id="clusters-xml" class="anchor" href="#clusters-xml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The clusters.xml File</h3>
-            <h3>
-<a id="stores-xml-2" class="anchor" href="#stores-xml-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The stores.xml File</h3>
-            <h3>
-<a id="node-properties" class="anchor" href="#node-properties" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The node.properties File</h3>
-            
-            
-            <h1>
-<a id="jmx-monitoring" class="anchor" href="#jmx-monitoring" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JMX Monitoring</h1>
-            
-            
-            <h1>
-<a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maven</h1>
 
-            
-            
-            
-            
-            
-            
+
+            <h2>
+<a id="config" class="anchor" href="#config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Store and Cluster Config Files</h2>
+            <h3>
+<a id="store-config" class="anchor" href="#store-config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Store Config</h3>
+            <h4>
+<a id="stores-xml" class="anchor" href="#stores-xml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The stores.xml File</h4>
+            <h3>
+<a id="cluster-config" class="anchor" href="#cluster-config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cluster Config</h3>
+            <h4>
+<a id="clusters-xml" class="anchor" href="#clusters-xml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The clusters.xml File</h4>
+            <h4>
+<a id="stores-xml-2" class="anchor" href="#stores-xml-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The stores.xml File</h4>
+            <h4>
+<a id="node-properties" class="anchor" href="#node-properties" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The node.properties File</h4>
+
+
+            <h2>
+<a id="jmx-monitoring" class="anchor" href="#jmx-monitoring" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JMX Monitoring</h2>
+
+
+            <h2>
+<a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maven</h2>
+
+
+
+
+
+
+
 
             <h2>
 <a id="what-is-cachestore" class="anchor" href="#what-is-cachestore" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is CacheStore?</h2>
