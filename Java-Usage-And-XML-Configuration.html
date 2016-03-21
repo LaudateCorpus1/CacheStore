@@ -12,6 +12,7 @@
             background-color: #E8E8E8;
             color: green;
         }
+
     </style>
     <style>
         OL {
@@ -35,6 +36,7 @@
         LI.default:before {
             content: "";
         }
+
     </style>
     <title>Java Usage and XML Configuration</title>
 </head>
@@ -119,6 +121,12 @@
                                             <a href="#object-file">Object File</a>
                                         </li>
                                     </ol>
+                                </li>
+                                <li>
+                                    <a href="#scan">Scan</a>
+                                </li>
+                                <li>
+                                    <a href="#cursor">Cursor</a>
                                 </li>
                                 <li>
                                     <a href="#stored-procedures-2">Stored Procedures</a>
@@ -236,13 +244,9 @@
 
             <h3>
 <a id="triggers" class="anchor" href="#triggers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Triggers</h3>
-            <p>Get, Put and Delete Triggers are implemented on CacheStore servers. Get Triggers occur
-when doing a "get" operations, Put Triggers occur when doing a "put" operation, and
-Delete Triggers occur when doing a "remove" operation. Get and Put Triggers have a
-before operation and after operation function while Delete Triggers only have a before
-operation.</p>
-            <p>Triggers are implemented through interfaces GetTrigger.java and PutTrigger.java and their
-functions must be overridden.</p>
+            <p>Get, Put and Delete Triggers are implemented on CacheStore servers. Get Triggers occur when doing a "get" operations, Put Triggers occur when doing a "put" operation, and Delete Triggers occur when doing a "remove" operation. Get and Put Triggers have a before operation and after operation function while Delete Triggers only have a before operation.
+            </p>
+            <p>Triggers are implemented through interfaces GetTrigger.java and PutTrigger.java and their functions must be overridden.</p>
             <p>Get Trigger:</p>
             <code>public class GetTrigger implements com.sm.store.GetTrigger {
 @Override
@@ -254,64 +258,388 @@ return false;
 public Value afterGet(Key key, Value value, CacheStore store) {
 System.out.println("After get");
 return value;</code>
+            <p>
+                Put Trigger:
+            </p>
+            <code>
+            public class PutTrigger implements com.sm.store.PutTrigger {
+
+    @Override
+    public boolean beforePut(Key key, Value value, CacheStore store) {
+        System.out.println("Before put");
+        return false;
+    }
+    @Override
+    public Value afterPut(Key key, Value value, CacheStore store) {
+        System.out.println("After put");
+        return value;
+    }
+}
+            </code>
+            <p>
+                Delete Trigger:
+            </p>
+            <code>
+            public class DeleteTrigger implements com.sm.store.DeleteTrigger {
+
+    @Override
+    public void beforeDelete(Key key, CacheStore store) {
+        System.out.println("Before Delete");
+    }
+}
+            </code>
+            <p>
+                Once a trigger is created, it must be linked on startup (such as by placing into lib or dist folder). Also, since triggers are store-specific, each store that implements a trigger must define it in its stores.xml file.
+            </p>
+            <p>
+                XML tags in stores.xml:
+            </p>
+            <code>
+            &lt;getTrigger&gt;com.mycompany.app.GetTrigger&lt;/getTrigger&gt;
+&lt;putTrigger&gt;com.mycompany.app.PutTrigger&lt;/putTrigger&gt;
+&lt;deleteTrigger&gt;com.mycompany.app.DeleteTrigger&lt;/deleteTrigger&gt;
+            </code>
+
             <h3>
 <a id="stored-procedures" class="anchor" href="#stored-procedures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stored Procedures</h3>
+            <p>Stored procedures are subroutines stored on servers that can be called by clients. For more information regarding stored procedures in CacheStore, refer to the Stored Procedures section under the Client section below.</p>
             <h3>
 <a id="queries" class="anchor" href="#quesries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Queries</h3>
+            <p>Queries are filtered searches that, like stored procedures, are initiated on the client side, but handled on the servers. More information can be found in the Object Query section under the Client section below.</p>
 
 
             <h2>
 <a id="client" class="anchor" href="#client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client - Connection and Functions</h2>
+            <p>
+                Before anything can be done on the servers, there must be a client to connect in order to interact with the servers.</p>
             <h3>
 <a id="remote-client" class="anchor" href="#remote-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Remote Client</h3>
+            <p>The remote client is the basic client used to connect to a remote store. It is a lightweight client that has a simple implementation that can be easily customized and adjusted for other programming languages.</p>
+            <code>RemoteClientImpl client = new NTRemoteClientImpl(HOST_CONNECT_URL, null, STORENAME);
+</code>
             <h3>
 <a id="scan-client" class="anchor" href="#scan-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Scan Client</h3>
+            <p>The scan client is a superset of the remote client as it extends the remote client and is dependent on more libraries, making it more difficult to customize and adjust for other languages, but making it have more features and be more powerful than the basic remote client.
+
+            </p>
+            <code>ScanClientImpl client = new GZScanClientImpl(HOST_CONNECT_URL, null, STORENAME);
+</code>
             <h3>
 <a id="cluster-client" class="anchor" href="#cluster-client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a Cluster Client</h3>
+            <p>The cluster client connects to a store within a cluster. Because clusters work together and concurrently, it doesn't matter which node within the cluster you connect to as they will access the same store.
+
+            </p>
+            <code>ccf = ClusterClientFactory.connect(HOST_CONNECT_URL, STORENAME);
+client = ccf.getDefaultStore();</code>
             <h3>
 <a id="client-functions" class="anchor" href="#client-functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client Functions</h3>
+            <p>Each type of CacheStore remote and cluster clients will generally have the same basic functions, such as "get" and "put", but some of the more advanced functions are only available or specifically tailored in certain types of clients. Because scan clients are a superset of Remote clients, they will have all the functions of remote clients and more.
+
+            </p>
             <h4>
 <a id="get-put" class="anchor" href="#get-put" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get/Put</h4>
+            <p>
+                The most basic of operations in a key-value storage system are the get and put commands. CacheStore is capable of storing object version and node information alongside object data information.</p>
+            <p>A simple get/put example:</p>
+            <code>Key&lt;Integer&gt; k = Key.createKey(1);
+ByteArray FooBar = new ByteArray("FooBar".getBytes());
+client.put(k, FooBar);
+Value&lt;ByteArray&gt; value = client.get(k);</code>
+            <p>The Key and ByteArray are placed into the store by the client with "put" and is then retrieved as a Value with "get".
+
+            </p>
             <h4>
 <a id="remove" class="anchor" href="#remove" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Remove</h4>
+            <p>Remove is used to delete an existing key-value pair by key:</p>
+            <code>client.remove(k);</code>
             <h4>
-<a id="bulk-operations" class="anchor" href="#bulk-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bulk Operations (multiOperations)</h4>
+<a id="bulk-operations" class="anchor" href="#bulk-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bulk Operations</h4>
+            <p>CacheStore supports a bulk (also known as multiOperation) system that allows users to easily and quickly get/put/remove keys and values. Keep in mind that multiOperations take in a query String as one of the parameters, but this parameter can also be null. Query String syntax can be found at: Object Query Guide.</p>
+            <p>The following is an example of multiGets, multiPuts, and multiRemoves:</p>
+            <code>List&lt;KeyValue&gt; mGet = client.multiGets(keyList);
+client.multiRemove(keyList);
+client.multiPuts(mGet);</code>
             <h4>
 <a id="object-query" class="anchor" href="#object-query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object Query</h4>
+            <p>Although queries are handled by the CacheStore server, they are initiated by CacheStore clients. CacheStore supports full Object Queries minus aggregation and joins. Please refer to the Object Query Guide for an object query overview and query statement syntax.</p>
+            <p>There are two main query functions, query and query4Json. Query returns a List of key value pairs while query4Json returns a List of Strings or a String that can be converted into Json objects.</p>
+            <p>Remote/Scan:</p>
+            <code>List&lt;KeyValue&gt; queryResults = client.query("select name, age, height from Person where key# = 100");
+String query4JResults = client.query4Json("select name, age from Student");</code>
+            <p>Cluster:</p>
+            <code>List&lt;KeyValue&gt; queryResults = client.query("select grade from Class where key# = 100");
+List&lt;String&gt; query4JResults = client.query4Json("select name, age, salary from Employee");</code>
             <h5>
 <a id="object-file" class="anchor" href="#object-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Object File</h5>
+            <p>Since the Object Query runs queries on objects, then of course we need some sort of object file. In Java, our object files will be in the form of Classes.</p>
+            <p>Here is a simple implementation of the Student Class referred in the examples above:</p>
+            <code>import java.io.Serializable;
+
+public class Student implements Serializable {
+    String name;
+    int age;
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+    @Override
+    public String toString() {
+        return "Student{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+
+}</code>
+            <p>CacheStore is not limited to this Student Class. Other implementations can also be used as well. More information can be found in the Object Query Guide.</p>
+            <h4>
+<a id="scan" class="anchor" href="#scan" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Scan</h4>
+            <p>A range scan is a mechanism to search through a range of keys by reading index entries sequentially. These types of scans can be done in CacheStore and can be optionally filtered using a query statement. Scans in CacheStore can only be done on sorted stores.</p>
+            <code>List&lt;KeyValue&gt; scanResult1 = client.scan(key1, key2, null);
+List&lt;KeyValue&gt; scanResult2 = client.scan(key3, key4, queryString);</code>
+            <h4>
+<a id="cursor" class="anchor" href="#cursor" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cursor</h4>
+            <p>A cursor is a control structure that allows traversal over records. Cursors in CacheStore are implemented for range scans, key iterators, and key-value pairs.</p>
+            <p>A simple use of scan cursors:</p>
+            <code>CursorPara keyCursor = client.openKeyCursor((short) 1000);
+System.out.println("KeyCursor: "+keyCursor.getKeyValueList());
+keyCursor = client.nextCursor(keyCursor);
+System.out.println("KeyCursor next: "+keyCursor.getKeyValueList());
+client.closeCursor(keyCursor);
+
+CursorPara keyValueCursor = client.openKeyValueCursor((short) 900);
+System.out.println("KeyValueCursor: "+keyValueCursor.getKeyValueList());
+keyValueCursor = client.nextCursor(keyValueCursor);
+System.out.println("KeyValueCursor next: "+keyValueCursor.getKeyValueList());
+client.closeCursor(keyValueCursor);
+
+CursorPara scanCursor = client.openScanCursor((short) 1000, k1, k4);
+System.out.println("ScanCursor: "+scanCursor.getKeyValueList());
+scanCursor = client.nextCursor(scanCursor);
+System.out.println("ScanCursor next: "+scanCursor.getKeyValueList());
+client.closeCursor(scanCursor);</code>
+            <p>A simple use of cluster cursors:</p>
+            <code>ClusterClient.ClusterCursor keyCursor = client.openKeyCursor((short) 1000); //null pointer exception
+System.out.println("KeyCursor: "+keyCursor.getResult());
+keyCursor = client.nextCursor(keyCursor);
+System.out.println("KeyCursor: "+keyCursor.getResult());
+keyCursor.close();
+
+ClusterClient.ClusterCursor keyValueCursor = client.openKeyValueCursor((short) 40);
+System.out.println("KeyValueCursor: "+keyValueCursor.getResult());
+keyValueCursor = client.nextCursor(keyValueCursor);
+System.out.println("KeyValueCursor: "+keyValueCursor.getResult());
+keyValueCursor.close();
+
+ClusterClient.ClusterCursor scanCursor = client.openScanCursor((short) 750, k1, k4);
+System.out.println("ScanCursor: "+scanCursor.getResult());
+scanCursor = client.nextCursor(scanCursor);
+System.out.println("ScanCursor: "+scanCursor.getResult());
+scanCursor.close();</code>
             <h4>
 <a id="stored-procedures" class="anchor" href="#stored-procedures-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stored Procedures</h4>
+            <p>Stored procedures are able to be defined using stored procedure files, the Invoker Class, and the invoke function. First, Some sort of stored procedure must be defined. In this example we will be using a StoreProc.groovy file (.groovy stored procedures are defaulted to config/script) to define our stored procedure:</p>
+            <code>class StoreProc implements StoreMap {
+    String city = "irvine"
+    ConcurrentMap&lt;String, RemoteStore&gt; storeMaps
+
+    def sayHello(String name) {
+        println( "hello new -- $name")
+        "hello new -- "+name
+    }
+
+    @Override
+    void setStoreMap(ConcurrentMap&lt;String, RemoteStore&gt; storeMaps) {
+        this.storeMaps = storeMaps
+    }
+}</code>
+            <p>Now that we have our stored procedure defined in a .groovy class file, we need to initialize our Invoker class with this file:</p>
+            <code>Invoker invoker = new Invoker("StoreProc.groovy", "sayHello", new Object[] {"test" } );
+</code>
+            <p>The last step is to actually call, or invoke, this Invoker object:
+
+            </p>
+            <code>String result = (String) client.invoke(invoker);
+System.out.println(result);</code>
+            <p>Using stored procedures in Java is very similar. First, a stored procedure must be created in Java then put into a .jar file. The .jar file must be linked on startup (usually by placing into lib or dist folder).</p>
+            <code>public class JavaStoreProc implements StoreMap{
+    ConcurrentMap&lt;String, RemoteStore&gt; storeMaps;
+    public void helloWorld(String name){
+        System.out.println("Hello, " + name);
+    }
+    @Override
+    public void setStoreMap(ConcurrentMap&lt;String, RemoteStore&gt; storeMaps) {
+        this.storeMaps = storeMaps;
+    }
+}</code>
+            <p>Creating and calling the invoker is the same except the fully qualified class name must be specified in place of the Groovy script.</p>
+            <code>Invoker invoker = new Invoker("com.mycompany.app.JavaStoreProc", "helloWorld", new Object[] {"test" } );
+</code>
+            <p>The invoker will initialize the class based using the default constructor without arguments. Arguments can be passed to the method being called.
+
+            </p>
             <h3>
 <a id="key-sequencing" class="anchor" href="#key-sequencing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Key Sequencing</h3>
+            <p>CacheStore supports the use of sequencing data, which is recommended to keep keys organized and avoid key collision problems. To get started with sequencing, first create a store with keys that contain integer data = 0. Whenever accessing this store, use the client function "getSeqNoInt(Key key)". This will automatically increment the data by 1. Other than sequencing, this function can be used for however the developer wants.
+
+            </p>
             <h3>
 <a id="serialization" class="anchor" href="#serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Serialization</h3>
+            <p>CacheStore supports multiple types of serialization. It is defaulted to use Hessian, but can be implemented with custom serialization. Serialization must occur on both the server and client side so the serializer must be present on both ends.
+
+            </p>
             <h3>
 <a id="hessian-serialization" class="anchor" href="#hessian-serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hessian Serialization</h3>
+            <p>The default Hessian serialization is included in the CacheStore package. More information on Hessian Serialization can be found at: <a hfref=http://hessian.caucho.com>http://hessian.caucho.com</a>
+
+            </p>
 
 
             <h2>
 <a id="config" class="anchor" href="#config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Store and Cluster Config Files</h2>
+            <p>The Config files allow users to setup and customize CacheStore servers, clusters, and stores.</p>
             <h3>
 <a id="store-config" class="anchor" href="#store-config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Store Config</h3>
+            <p>The stores.xml is used by every instance of CacheStore. Store configuration allows users to setup how they want their data to be stored and accessed.</p>
             <h4>
 <a id="stores-xml" class="anchor" href="#stores-xml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The stores.xml File</h4>
+            <p>Store metadata is defined in the stores.xml file in the config folder.</p>
+            <p>A stores.xml file with all tags filled with their data type:</p>
+            <code>&lt;clusters&gt;
+  &lt;port&gt;int&lt;/port&gt;
+  &lt;className&gt;String&lt;/className&gt;
+  &lt;maxQueue&gt;int&lt;/maxQueue&gt;
+  &lt;maxThread&gt;int&lt;/maxThread&gt;
+  &lt;replicaPort&gt;int&lt;/replicaPort&gt;
+  &lt;freq&gt;int&lt;/freq&gt;
+  &lt;useNio&gt;boolean&lt;/useNio&gt;
+  &lt;store&gt;
+    &lt;name&gt;String&lt;/name&gt;
+    &lt;path&gt;String&lt;/path&gt;
+    &lt;delay&gt;boolean&lt;/delay&gt;
+    &lt;mode&gt;int&lt;/mode&gt;
+    &lt;freq&gt;int&lt;/freq&gt;
+    &lt;batchSize&gt;int&lt;/batchSize&gt;
+    &lt;logPath&gt;String&lt;/logPath&gt;
+    &lt;replicaUrl&gt;List&lt;/replicaUrl&gt;
+    &lt;replicaTimeout&gt;long&lt;/replicaTimeout&gt;
+    &lt;sorted&gt;boolean&lt;/sorted&gt;
+    &lt;getTrigger&gt;String&lt;/getTrigger&gt;
+    &lt;putTrigger&gt;String&lt;/putTrigger&gt;
+    &lt;deleteTrigger&gt;String&lt;/deleteTrigger&gt;
+    &lt;useMaxCache&gt;boolean&lt;/useMaxCache&gt;
+    &lt;maxCacheMemory&gt;int&lt;/maxCacheMemory&gt;
+    &lt;useLRU&gt;boolean&lt;/useLRU&gt;
+    &lt;pstReplicaUrl&gt;List&lt;/pstReplicaUrl&gt;
+  &lt;/store&gt;
+&lt;/clusters&gt;</code>
+            <p>And the following is a sample stores.xml file:</p>
+            <code>&lt;clusters&gt;
+  &lt;port&gt;4200&lt;/port&gt;
+  &lt;replicaPort&gt;4204&lt;/replicaPort&gt;
+  &lt;store&gt;
+    &lt;name&gt;test&lt;/name&gt;
+    &lt;path&gt;data&lt;/path&gt;
+    &lt;delay&gt;false&lt;/delay&gt;
+    &lt;mode&gt;0&lt;/mode&gt;
+    &lt;freq&gt;10&lt;/freq&gt;
+    &lt;batchSize&gt;1&lt;/batchSize&gt;
+    &lt;sorted&gt;true&lt;/sorted&gt;
+    &lt;getTrigger&gt;com.mycompany.app.GetTrigger&lt;/getTrigger&gt;
+    &lt;putTrigger&gt;com.mycompany.app.PutTrigger&lt;/putTrigger&gt;
+    &lt;deleteTrigger&gt;com.mycompany.app.DeleteTrigger&lt;/deleteTrigger&gt;
+  &lt;/store&gt;
+  &lt;store&gt;
+    &lt;name&gt;store&lt;/name&gt;
+    &lt;path&gt;data&lt;/path&gt;
+    &lt;delay&gt;false&lt;/delay&gt;
+    &lt;mode&gt;0&lt;/mode&gt;
+    &lt;freq&gt;10&lt;/freq&gt;
+    &lt;batchSize&gt;1&lt;/batchSize&gt;
+    &lt;sorted&gt;true&lt;/sorted&gt;
+  &lt;/store&gt;
+&lt;/clusters&gt;</code>
+            <p>Each tag contains information on store metadata.</p>
+            <ul>
+                <li class="default"><code>&lt;clusters&gt;</code>: Defines all the stores</li>
+                <li class="default"><code>&lt;port&gt;</code>: Defines the port that the store will be opened on</li>
+                <li class="default"><code>&lt;className&gt;</code>: Defines which serializer to use</li>
+                <li class="default"><code>&lt;maxQueue&gt;</code>: Defines max queue</li>
+                <li class="default"><code>&lt;maxThread&gt;</code>: Defines max thread</li>
+                <li class="default"><code>&lt;replicaPort&gt;</code>: Defines the port that will be used for replication</li>
+                <li class="default"><code>&lt;freq&gt;</code>: Defines the frequency of replication</li>
+                <li class="default"><code>&lt;useNio&gt;</code>: Defines whether or not to use NIO, Non-Blocking I/O</li>
+                <li class="default"><code>&lt;store&gt;</code>: Defines a store and contains metadata on the defined store</li>
+                <li class="default"><code>&lt;name&gt;</code>: Defines the name of the store</li>
+                <li class="default"><code>&lt;path&gt;</code>: Defines the path the store, and hence the store's data, will be written to</li>
+                <li class="default"><code>&lt;delay&gt;</code>: Defines whether there will be delay</li>
+                <li class="default"><code>&lt;mode&gt;</code>: Defines the mode</li>
+                <li class="default"><code>&lt;freq&gt;</code>: Defines the frequency of replication</li>
+                <li class="default"><code>&lt;batchSize&gt;</code>: Defines the batch size</li>
+                <li class="default"><code>&lt;logPath&gt;</code>: Defines the path that logs will be written to</li>
+                <li class="default"><code>&lt;replicaUrl&gt;</code>: Defines the replica URL</li>
+                <li class="default"><code>&lt;replicaTimeout&gt;</code>: Defines how long it takes for the replica to timeout</li>
+                <li class="default"><code>&lt;sorted&gt;</code>: Defines whether to use a sorted/ordered map or an unsorted/unordered map</li>
+                <li class="default"><code>&lt;getTrigger&gt;</code>: Defines a GetTrigger using fully qualified class name</li>
+                <li class="default"><code>&lt;putTrigger&gt;</code>: Defines a PutTrigger using fully qualified class name</li>
+                <li class="default"><code>&lt;deleteTrigger&gt;</code>: Defines a DeleteTrigger using fully qualified class name</li>
+                <li class="default"><code>&lt;useMaxCache&gt;</code>: Defines whether or not to use max cache</li>
+                <li class="default"><code>&lt;maxCacheMemory&gt;</code>: Defines the max cache memory size</li>
+                <li class="default"><code>&lt;useLRU&gt;</code>: Defines whether to use LRU</li>
+                <li class="default"><code>&lt;pstReplicaUrl&gt;</code>: Defines pst Replication URL</li>
+            </ul>
             <h3>
 <a id="cluster-config" class="anchor" href="#cluster-config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cluster Config</h3>
+            <p>Unlike remotes and local stores, configuration of clusters are handled in three files: clusters.xml, stores.xml, and node.properties. The clusters.xml contains metadata for the cluster as a whole. The stores.xml contains metadata for the stores contained within the cluster. The node.properties contains metadata specifically for the current node. All nodes within the same cluster should share the same clusters.xml and stores.xml, but have unique node.properties. The corresponding config files should be in the same config path, defined when initializing the cluster.</p>
             <h4>
 <a id="clusters-xml" class="anchor" href="#clusters-xml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The clusters.xml File</h4>
+            <p>Cluster metadata is defined in the clusters.xml file in the config folder. The following is a sample clusters.xml file:</p>
+            <code>&lt;clusters&gt;
+  &lt;cluster&gt;
+      &lt;no&gt;1&lt;/no&gt;
+      &lt;servers&gt;ash2-voxd014.sm-us.sm.local:6172, ash2-voxd004.sm-us.sm.local:6182&lt;/servers&gt;
+      &lt;partitions&gt;0,1&lt;/partitions&gt;
+  &lt;/cluster&gt;
+&lt;/clusters&gt;</code>
+            <p>Each tag contains information on cluster metadata.</p>
+            <ul>
+                <li class="default"><code>&lt;clusters&gt;</code>: Defines all the clusters</li>
+                <li class="default"><code>&lt;cluster&gt;</code>: Defines a single cluster</li>
+                <li class="default"><code>&lt;no&gt;</code>: Defines the number of the cluster</li>
+                <li class="default"><code>&lt;servers&gt;</code>: Defines which servers will be contained in the cluster</li>
+                <li class="default"><code>&lt;partitions&gt;</code>: Defines how the cluster's data will be partitioned</li>
+            </ul>
             <h4>
 <a id="stores-xml-2" class="anchor" href="#stores-xml-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The stores.xml File</h4>
+            <p>Refer to <a href=#stores-xml>"Store Config - The stores.xml File"</a> above.</p>
             <h4>
 <a id="node-properties" class="anchor" href="#node-properties" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The node.properties File</h4>
-
+            <p>Node properties are stored within this file. The node.properties file designates which node in the cluster the specific node is. The following is a sample node.properties file:</p>
+            <code>host=ash2-voxd004.sm-us.sm.local
+port=6182</code>
+            <p>Notice how unlike the other two config files, node.properties does not use XML. It is a .properties file that just defines the host and the port number that the current node is using.</p>
 
             <h2>
 <a id="jmx-monitoring" class="anchor" href="#jmx-monitoring" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JMX Monitoring</h2>
-
-
+            <p>CacheStore uses JMX monitoring.</p>
+            <p>More information on JMX monitoring can be found at: <a href=http://docs.oracle.com/javase/7/docs/technotes/guides/management/agent.html>http://docs.oracle.com/javase/7/docs/technotes/guides/management/agent.html</a></p>
             <h2>
 <a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maven</h2>
+            <p>CacheStore can be used as a standalone system or used as a plugin. To get CacheStore in your own project, add the following dependency in your pom.xml file:</p>
+            <code>&lt;dependency&gt;
+  &lt;groupId&gt;cachestore&lt;/groupId&gt;
+  &lt;artifactId&gt;cachestore&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;</code>
+            <p>More information about Maven can be found at: <a href=https://maven.apache.org>https://maven.apache.org/</a></p>
 
         </section>
     </div>
@@ -319,7 +647,7 @@ return value;</code>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
         <footer class="inner">
-            <p class="copyright">CacheStore maintained by <a href="https://github.com/viant">Viant, inc.</a></p>
+            <p class="copyright">CacheStore is maintained by the <a href="viant.github.io">Viant Data Engineering Team</a></p>
             <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
         </footer>
     </div>
@@ -327,4 +655,5 @@ return value;</code>
 
 
 </body>
+
 </html>
