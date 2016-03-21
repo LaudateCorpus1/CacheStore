@@ -13,29 +13,29 @@
             color: green;
         }
     </style>
-             <style>
-                OL {
-                    counter-reset: item;
-                    padding-left: 10px;
-                }
-                
-                LI {
-                    display: block
-                }
-                
-                LI:before {
-                    content: counters(item, ".") ". ";
-                    counter-increment: item
-                }
-                
-                 LI.default{
-                     display: list-item
-                 }
-                 LI.default:before{
-                     content: "";
-                         
-                 }
-            </style>
+    <style>
+        OL {
+            counter-reset: item;
+            padding-left: 10px;
+        }
+        
+        LI {
+            display: block
+        }
+        
+        LI:before {
+            content: counters(item, ".") ". ";
+            counter-increment: item
+        }
+        
+        LI.default {
+            display: list-item
+        }
+        
+        LI.default:before {
+            content: "";
+        }
+    </style>
     <title>Java Usage and XML Configuration</title>
 </head>
 
@@ -63,7 +63,7 @@
             <h2>
           <a id="table-of-contents" class="anchor" href="#table-of-contents" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Table of Contents</h2>
 
-   
+
             <ol>
                 <li>
                     <a href="#introduction">Introduction</a>
@@ -205,8 +205,7 @@
             <h2>
 <a id="server" class="anchor" href="#server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server - Remotes, Clusters, and Stores</h2>
             <p>
-                CacheStore can be deployed in three ways: locally, remotely, and on a cluster. The data
-within CacheStore is written and saved into what we call "stores". CacheStore servers can be started from either the provided startup scripts, custom startup scripts, or through JVM.
+                CacheStore can be deployed in three ways: locally, remotely, and on a cluster. The data within CacheStore is written and saved into what we call "stores". CacheStore servers can be started from either the provided startup scripts, custom startup scripts, or through JVM.
             </p>
             <h3>
 <a id="start-remote" class="anchor" href="#start-remote" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Start Remote</h3>
@@ -217,12 +216,44 @@ within CacheStore is written and saved into what we call "stores". CacheStore se
             </p>
             <p>
                 Take note that the argument opts are <code>{"‐configPath", "‐start" }</code> and are defaulted to
-            <code>{"./config", "true"}</code>.
+                <code>{"./config", "true"}</code>.
             </p>
             <h3>
 <a id="start-cluster" class="anchor" href="#start-cluster" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Start Cluster</h3>
+            <p>
+                To start a Cluster, make a call to ClusterServer.java's main method:
+                <code>
+                ClusterServer.main(args)
+                </code>
+            </p>
+            <p>
+                Take note that the argument opts are <code>{"‐host","‐configPath","‐dataPath", "‐port", "replicaPort", "‐start", "‐freq"}</code> and are defaulted to <code>{"","",".", "0", "0", "true", "0"}</code>.
+
+            </p>
+            <p>
+                Each node in the cluster must individually start CacheStore and have the correct config files set up accordingly. Please refer to the Cluster Config Section below and to the Cluster User Guide for more information regarding node setup.
+            </p>
+
             <h3>
 <a id="triggers" class="anchor" href="#triggers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Triggers</h3>
+            <p>Get, Put and Delete Triggers are implemented on CacheStore servers. Get Triggers occur
+when doing a "get" operations, Put Triggers occur when doing a "put" operation, and
+Delete Triggers occur when doing a "remove" operation. Get and Put Triggers have a
+before operation and after operation function while Delete Triggers only have a before
+operation.</p>
+            <p>Triggers are implemented through interfaces GetTrigger.java and PutTrigger.java and their
+functions must be overridden.</p>
+            <p>Get Trigger:</p>
+            <code>public class GetTrigger implements com.sm.store.GetTrigger {
+@Override
+public boolean beforeGet(Key key, CacheStore store) {
+System.out.println("Before get");
+return false;
+}
+@Override
+public Value afterGet(Key key, Value value, CacheStore store) {
+System.out.println("After get");
+return value;</code>
             <h3>
 <a id="stored-procedures" class="anchor" href="#stored-procedures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stored Procedures</h3>
             <h3>
