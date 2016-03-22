@@ -188,6 +188,9 @@
                 </li>
                 <li>
                     <a href="#maven">Maven</a>
+                    <ol>
+                        <li><a href="#maven-dependencies">Maven Depdendencies</a></li>
+                    </ol>
                 </li>
             </ol>
 
@@ -640,12 +643,46 @@ port=6182</code></pre>
             <p>More information on JMX monitoring can be <a href=http://docs.oracle.com/javase/7/docs/technotes/guides/management/agent.html>Here</a>.</p>
             <h2>
 <a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>6. Maven</h2>
+            <p>CacheStore libraries have been uploaded to the Maven Central Repository.</p>
+            <p>More information about Maven can be found <a href=https://maven.apache.org>Here</a>.</p>
+            <h2>
+<a id="maven-dependencies" class="anchor" href="#maven-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>6.1 Maven Dependencies</h2>
             <p>CacheStore can be used as a standalone system or used as a plugin. To get CacheStore in your own project, add the following dependency in your pom.xml file:</p>
-            <pre><code>&lt;dependency&gt;
-  &lt;groupId&gt;cachestore&lt;/groupId&gt;
-  &lt;artifactId&gt;cachestore&lt;/artifactId&gt;
-  &lt;version&gt;1.0.0&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+            <pre><code>    &lt;dependency&gt;
+        &lt;groupId>com.viantinc.cachestore&lt;/groupId&gt;
+        &lt;artifactId&gt;cachestore&lt;/artifactId&gt;
+        &lt;version&gt;1.0.2&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.viantinc.cachestore&lt;/groupId&gt;
+        &lt;artifactId&gt;client&lt;/artifactId&gt;
+        &lt;version>1.5.2&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.viantinc.cachestore&lt;/groupId&gt;
+        &lt;artifactId&gt;core&lt;/artifactId&gt;
+        &lt;version&gt;1.1.8&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.viantinc.cachestore&lt;/groupId&gt;
+        &lt;artifactId&gt;server&lt;/artifactId&gt;
+        &lt;version&gt;1.4.10&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.viantinc.cachestore&lt;/groupId&gt;
+        &lt;artifactId&gt;objectquery&lt;/artifactId&gt;
+        &lt;version&gt;1.3.7&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.viantinc.cachestore&lt;/groupId&gt;
+        &lt;artifactId&gt;replica&lt;/artifactId&gt;
+        &lt;version&gt;2.2.3&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.viantinc.cachestore&lt;/groupId&gt;
+        &lt;artifactId&gt;transport&lt;/artifactId&gt;
+        &lt;version&gt;2.2.0&lt;/version&gt;
+    &lt;/dependency&gt;&gt;</code></pre>
             <p>More information about Maven can be found <a href=https://maven.apache.org>Here</a>.</p>
 
         </section>
