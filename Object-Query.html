@@ -50,7 +50,7 @@
         <section id="main_content" class="inner">
             <p>CacheStore features a query system that implements Object Queries, minus joins and aggregation. Below is an overview and guide of how our query system works and the basic syntax it uses.</p>
             <p>First, we need to start a CacheStore server and start a client through the CacheStore interactive shell. This can be found in the "Quickstart" section under the corresponding user guides (Remote and Cluster).</p>
-            <p>Once CacheStore is up and running, connect to a store using the CacheStore shell. For this guide, we will be using "c" as our client and a Person class defined below:</p>
+            <p>Once CacheStore is up and running, connect to a store using the CacheStore shell. For this guide, we will be assuming a few things. "c" will be a variable for our client. The Person class will be our model object that will be used as the format for the values being saved and retrieved. The Person class is defined below:</p>
             <pre><code>import java.io.Serializable;
 
 public class Person implements Serializable {

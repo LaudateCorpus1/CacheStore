@@ -453,6 +453,7 @@ Full-Width Styles
     height: 70px;
     line-height: 20px;
     color: white;
+    font-size: 15px;
     text-align: center;
     overflow: hidden;
     background: url(../images/sprite_link.png) no-repeat bottom;
@@ -470,6 +471,7 @@ Full-Width Styles
     height: 70px;
     line-height: 20px;
     color: white;
+    font-size: 15px;
     text-align: center;
     overflow: hidden;
     background: url(../images/sprite_link.png) no-repeat top;
