@@ -24,7 +24,11 @@ So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.
 ## Documentation
 
 * User Guides:
-  * In Progress
+  * [CacheStore Usage Guide](http://viant.github.io/CacheStore/CacheStore-For-Dummies.html)
+  * [Object Query Guide] (http://viant.github.io/CacheStore/Object-Query.html)
+  * [CacheStore Groovy Shell Guide] (http://viant.github.io/CacheStore/CacheStore-Shell.html)
+* Changelog:
+	* [Changelog] (http://viant.github.io/CacheStore/Changelog.html)
 
 ## Download
 
@@ -72,6 +76,7 @@ To get CacheStore and its modules into your own project add these dependencies t
 
 ## Latest Version
 
+The latest stable version is CacheStore 1.0.2
 CacheStore Code Base: https://github.com/viant/CacheStore
 
 ## Copyright and Licensing
@@ -85,4 +90,6 @@ The source code is available under the Apache 2.0 license. We are actively looki
 
 [Open-source Admin: Lester Pi supervised by Mike Yang and Mickey Hsieh]
 
-[QA/Test: Data Team @ Viant, Inc.]
+[CacheStore Website: Lester Pi supervised by the Viant Data Engineering Team ]
+
+[QA/Test: Viant Data Engineering Team]
