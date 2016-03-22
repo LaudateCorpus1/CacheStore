@@ -7,6 +7,7 @@
     <meta name="description" content="Cachestore : ">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" href="./stylesheets/flama.css">
     <style type="text/css">
         OL {
             counter-reset: item;
@@ -28,7 +29,6 @@
         LI.default:before {
             content: "";
         }
-
     </style>
     <title>CacheStore For Dummies</title>
 </head>
@@ -42,11 +42,23 @@
             <a id="forkme_banner" href="https://github.com/viant/CacheStore">View on GitHub</a>
 
 
-            <h1 id="project_title">CacheStore For Dummies</h1>
+            <h1 id="project_title">CacheStore Usage Guide</h1>
             <h2 id="project_tagline">A Practical Guide and Code Usage</h2>
 
             <section id="downloads">
-                <a class="folder_link" href="./index.html">Home</a>
+                <a class="folder_link" href="./changelog.html">
+                    <br style="line-height:25px;">Changelog</a>
+                <a class="folder_link" href="./CacheStore-Shell.html">
+                    <br>Groovy
+                    <br>Shell</a>
+                <a class="folder_link" href="./Object-Query.html">
+                    <br>Object
+                    <br>Query</a>
+                <a class="folder_selected" href="./CacheStore-For-Dummies.html">
+                    <br>Usage
+                    <br>Guide</a>
+                <a class="folder_link" href="./index.html">
+                    <br style="line-height:25px;">Home</a>
                 <!--
                 <a class="zip_download_link" href="https://github.com/viant/CacheStore/zipball/master">Download this project as a .zip file</a>
                 <a class="tar_download_link" href="https://github.com/viant/CacheStore/tarball/master">Download this project as a tar.gz file</a>
@@ -185,10 +197,10 @@
                 CacheStore contains a robust set of features implemented in Java that can be utilized to quickly access, manipulate, and modify billions of record sets contained in "stores". CacheStore will read mainly from XML config files to determine how to configure, read, and write store data.
             </p>
             <p>
-                This manual will take a look into CacheStore's Java API, Java code, and XML config files. Code examples can be found at: Sanity Test Source Files
+                This manual will take a look into CacheStore's Java API, XML config files, and general usage. Take note that the Java API can be called either through Java applications or through the <a href=./CacheStore-Shell.html>CacheStore Groovy Shell</a>
             </p>
             <p>
-                If you have questions about Object Query syntax, take a look at the Object Query Guide for reference.
+                If you have questions about Object Query syntax, take a look at the <a href=./Object-Query.html> Object Query Guide</a> for reference.
             </p>
             <p>
                 Also, in our examples, we will assume a few things:
@@ -351,14 +363,14 @@ Value&lt;ByteArray&gt; value = client.get(k);</code></pre>
             <pre><code>client.remove(k);</code></pre>
             <h4>
 <a id="bulk-operations" class="anchor" href="#bulk-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.4.3. Bulk Operations</h4>
-            <p>CacheStore supports a bulk (also known as multiOperation) system that allows users to easily and quickly get/put/remove keys and values. Keep in mind that multiOperations take in a query String as one of the parameters, but this parameter can also be null. Query String syntax can be found at: Object Query Guide.</p>
+            <p>CacheStore supports a bulk (also known as multiOperation) system that allows users to easily and quickly get/put/remove keys and values. Keep in mind that multiOperations take in a query String as one of the parameters, but this parameter can also be null. Query String syntax can be found at: <a href=./Object-Query.html> Object Query Guide</a>.</p>
             <p>The following is an example of multiGets, multiPuts, and multiRemoves:</p>
             <pre><code>List&lt;KeyValue&gt; mGet = client.multiGets(keyList);
 client.multiRemove(keyList);
 client.multiPuts(mGet);</code></pre>
             <h4>
 <a id="object-query" class="anchor" href="#object-query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.4.4. Object Query</h4>
-            <p>Although queries are handled by the CacheStore server, they are initiated by CacheStore clients. CacheStore supports full Object Queries minus aggregation and joins. Please refer to the Object Query Guide for an object query overview and query statement syntax.</p>
+            <p>Although queries are handled by the CacheStore server, they are initiated by CacheStore clients. CacheStore supports full Object Queries minus aggregation and joins. Please refer to the <a href=./Object-Query.html> Object Query Guide</a> for an object query overview and query statement syntax.</p>
             <p>There are two main query functions, query and query4Json. Query returns a List of key value pairs while query4Json returns a List of Strings or a String that can be converted into Json objects.</p>
             <p>Remote/Scan:</p>
             <pre><code>List&lt;KeyValue&gt; queryResults = client.query("select name, age, height from Person where key# = 100");
@@ -394,7 +406,7 @@ public class Student implements Serializable {
                 '}';
     }
 }</code></pre>
-            <p>CacheStore is not limited to this Student Class. Other implementations can also be used as well. More information can be found in the Object Query Guide.</p>
+            <p>CacheStore is not limited to this Student Class. Other implementations can also be used as well. More information can be found in the <a href=./Object-Query.html> Object Query Guide</a>.</p>
             <h4>
 <a id="scan" class="anchor" href="#scan" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.4.5. Scan</h4>
             <p>A range scan is a mechanism to search through a range of keys by reading index entries sequentially. These types of scans can be done in CacheStore and can be optionally filtered using a query statement. Scans in CacheStore can only be done on sorted stores.</p>

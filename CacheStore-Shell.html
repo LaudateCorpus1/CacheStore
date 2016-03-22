@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Cachestore : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" href="./stylesheets/flama.css">
+
+    <title>CacheStore</title>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+            <a id="forkme_banner" href="https://github.com/viant/CacheStore">View on GitHub</a>
+
+            <h1 id="project_title">CacheStore Groovy Shell</h1>
+            <h2 id="project_tagline">An Interactive Groovy Shell For Instantaneously Accessing CacheStore</h2>
+
+            <section id="downloads">
+                <a class="folder_link" href="./changelog.html">
+                    <br style="line-height:25px;">Changelog</a>
+                <a class="folder_selected" href="./CacheStore-Shell.html">
+                    <br>Groovy
+                    <br>Shell</a>
+                <a class="folder_link" href="./Object-Query.html">
+                    <br>Object
+                    <br>Query</a>
+                <a class="folder_link" href="./CacheStore-For-Dummies.html">
+                    <br>Usage
+                    <br>Guide</a>
+                <a class="folder_link" href="./index.html">
+                    <br style="line-height:25px;">Home</a>
+
+                <!--
+                <a class="zip_download_link" href="https://github.com/viant/CacheStore/zipball/master">Download this project as a .zip file</a>
+                <a class="tar_download_link" href="https://github.com/viant/CacheStore/tarball/master">Download this project as a tar.gz file</a>
+-->
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+        <section id="main_content" class="inner">
+            <p>The CacheStore Shell is an interactive shell using Groovy. This shell lets users easily and instantly access and manage clusters and stores within CacheStore without having to set up separate programs.</p>
+            <h2>
+            <a id="shell-setup-and-usage" class="anchor" href="#shell-setup-and-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CacheStore Shell Setup and Usage</h2>
+            <p>The shell can be easily started with the script, CachestoreShell.sh from either the CacheStore Remote or CacheStore Cluster deployments. Start the shell with the command sh bin/CachestoreShell.sh. The CacheStore Shell is capable of all CacheStore Java commands as well as shell-specific shorthand commands.</p>
+
+            <p>Once the shell is up and running, you can now connect to existing CacheStore servers that are running. Depending on what type of server you are connecting to and what type of client you want to create, you will need to use one of the following commands:</p>
+            <pre><code>- open(url, store)
+
+ex: c = open("localhost:4200", "test")
+
+- openScan(url, store)
+
+ex: c = openScan("localhost:4200", "test")
+
+- openCluster(url, store)
+
+ex: c = openCluster("localhost:4200", "test")
+</code></pre>
+            <p>Once a connection has been established, you can now use the CacheStore Shell API. Here are some examples of API usage.</p>
+            <pre><code>- getv(c, 1)
+
+- listKey(c)
+
+- put(c, "key", "object")
+
+- remove(c, 1)
+
+- remove(c, "key")</code></pre>
+
+
+            <h2>
+        <a id="shell-commands" class="anchor" href="#shell-commands" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CacheStore Shell Commands</h2>
+            <pre><code>- open(url, store)
+
+- openScan(url, store)
+
+- openCluster(url, store)
+
+- scan(client, from, to)
+
+- scanCursor(client, from, to)
+
+- nextCursor(client, nextCursor)
+
+- listKey(client)
+
+- get(client, k)
+
+- getv(client, k)
+
+- put(client, k, object)
+
+- mget(client, keyList)
+
+- mgetv(client, keyList)
+
+- remove(client, k)
+
+- query(client, query)
+
+- query4List(client, query)
+
+- query4v(client, query)</code></pre>
+
+        </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+        <footer class="inner">
+            <p class="copyright">CacheStore is maintained by the <a href="viant.github.io">Viant Data Engineering Team</a></p>
+            <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+        </footer>
+    </div>
+
+
+
+</body>
+
+</html>

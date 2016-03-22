@@ -134,7 +134,7 @@ body {
     color: #373737;
     background: #212121;
     font-size: 16px;
-    font-family: 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
+    font-family: Flama, 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
 }
@@ -148,7 +148,7 @@ h6 {
     margin: 10px 0;
     font-weight: 700;
     color: #222222;
-    font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
+    font-family: Flama, 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
     letter-spacing: -1px;
 }
 
@@ -451,7 +451,7 @@ Full-Width Styles
     float: right;
     width: 90px;
     height: 70px;
-    line-height: 85px;
+    line-height: 20px;
     color: white;
     text-align: center;
     overflow: hidden;
@@ -461,6 +461,19 @@ Full-Width Styles
 
 .folder_link:hover {
     background: url(../images/sprite_link.png) no-repeat top;
+}
+
+.folder_selected {
+    display: block;
+    float: right;
+    width: 90px;
+    height: 70px;
+    line-height: 20px;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    background: url(../images/sprite_link.png) no-repeat top;
+    margin-left: 10px;
 }
 
 #main_content_wrap {

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Cachestore : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" href="./stylesheets/flama.css">
+
+    <title>CacheStore</title>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+            <a id="forkme_banner" href="https://github.com/viant/CacheStore">View on GitHub</a>
+
+            <h1 id="project_title">Object Query</h1>
+            <h2 id="project_tagline">A Introduction and Tutorial to CacheStore's Object Query</h2>
+
+            <section id="downloads">
+                <a class="folder_link" href="./changelog.html">
+                    <br style="line-height:25px;">Changelog</a>
+                <a class="folder_link" href="./CacheStore-Shell.html">
+                    <br>Groovy
+                    <br>Shell</a>
+                <a class="folder_selected" href="./Object-Query.html">
+                    <br>Object
+                    <br>Query</a>
+                <a class="folder_link" href="./CacheStore-For-Dummies.html">
+                    <br>Usage
+                    <br>Guide</a>
+                <a class="folder_link" href="./index.html">
+                    <br style="line-height:25px;">Home</a>
+
+                <!--
+                <a class="zip_download_link" href="https://github.com/viant/CacheStore/zipball/master">Download this project as a .zip file</a>
+                <a class="tar_download_link" href="https://github.com/viant/CacheStore/tarball/master">Download this project as a tar.gz file</a>
+-->
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+        <section id="main_content" class="inner">
+            <p>CacheStore features a query system that implements Object Queries, minus joins and aggregation. Below is an overview and guide of how our query system works and the basic syntax it uses.</p>
+            <p>First, we need to start a CacheStore server and start a client through the CacheStore interactive shell. This can be found in the "Quickstart" section under the corresponding user guides (Remote and Cluster).</p>
+            <p>Once CacheStore is up and running, connect to a store using the CacheStore shell. For this guide, we will be using "c" as our client and a Person class defined below:</p>
+            <pre><code>import java.io.Serializable;
+
+public class Person implements Serializable {
+    String name;
+    int age;
+    boolean male;
+    Address address;
+
+    public Student(String name, int age, boolean male, Address address) {
+        this.name = name;
+        this.age = age;
+        this.male = male;
+        this.address = address;
+    }
+
+    public static class Address implements Serializable{
+        String street;
+        int zip;
+
+        public Address(String street, int zip){
+            this.street = street;
+            this.zip = zip;
+        }
+        public String getStreet(){
+            return street;
+        }
+        public int getZip(){
+            return zip;
+        }
+        @Override
+        public String toString(){
+            return "Address{" +
+                    "street='" + street + '\'' +
+                    ", zip=" + zip +
+                    '}';
+       }
+    }
+
+    public String getName() {
+        return name;
+    }
+    public int getAge() {
+        return age;
+    }
+    public boolean isMale() {
+        return male;
+    }
+    public Address getAddress() {
+        return address;
+    }
+    @Override
+    public String toString() {
+        return "Student{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", male=" + male +
+                ", address=" + address +
+                '}';
+    }
+
+}</code></pre>
+            <p>Basic Query query(c, "select name from Person") query(c, "select name, age from Person")</p>
+            <p>Selecting inner class Address from Person</p>
+            <pre><code>query(c, "select Address.street from Person")
+query(c, "select Address.street, Address.zip from Person")</code></pre>
+            <p>Select with Where statements</p>
+            <pre><code>query(c, "select name, age from Person where age > 10")
+query(c, "select name, age from Person where name = \"Mickey\" or male = false")
+query(c, "select name, from Person where Address.street =\"Main\" and Address.zip = 92808")
+query(c, "select name, age, Address.zip from Person where (age >15 or male = true) and (Address.zip = 95604)")</code></pre>
+            <p>Select by key number</p>
+            <pre><code>query(c, "select name, age from Person where key# = 1")
+query(c, "select name, age from Person where (key# > 5 and key# != 20) and (age &lt;= 50 or male = true)")</code></pre>
+            <p>Replace (update)</p>
+            <pre><code>query(c, "replace Person set age = 99 where age = 50")
+query(c, "replace Address set zip = 10000")</code></pre>
+            <p>A few things to take note of:</p>
+            <ul>
+                <li>"query" is the main query command, but there is also "query4v" and "query4List" which use the same query syntax</li>
+                <li>The query syntax is case sensitive; statements are all all lower case and object fields must match case exactly how they are defined in the object</li>
+                <li>Primitive fields of the object level that is queried for will always show. In these examples, select age should also return male, but not name or Address while select name will return name, age, male, but not Address and so on</li>
+                <li>String quotes must be escaped: \"String\"</li>
+                <li>"key#" is a reserved keyword</li>
+                <li>Doubles, Floats, and Longs must start with an integer; ex. 0.1 instead of .1</li>
+            </ul>
+
+        </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+        <footer class="inner">
+            <p class="copyright">CacheStore is maintained by the <a href="viant.github.io">Viant Data Engineering Team</a></p>
+            <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+        </footer>
+    </div>
+
+
+
+</body>
+
+</html>
