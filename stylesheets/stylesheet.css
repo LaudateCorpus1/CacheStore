@@ -368,7 +368,7 @@ Full-Width Styles
 #forkme_banner {
     display: block;
     position: absolute;
-    top: 0;
+    top: 0px;
     right: 10px;
     z-index: 10;
     padding: 10px 50px 10px 10px;
@@ -383,7 +383,7 @@ Full-Width Styles
 #header_wrap {
     color: #fff;
     text-align: center;
-    background: #000000 url(../images/header-v-small.jpg) left no-repeat;
+    background: #000000 url(../images/header-v.jpg) left no-repeat;
     background-size: auto 100%;
 }
 
@@ -409,12 +409,12 @@ Full-Width Styles
 
 #downloads {
     position: absolute;
-    width: 210px;
+    width: 1000px;
     z-index: 10;
     bottom: -40px;
     right: 0;
     height: 70px;
-    background: url('../images/icon_download.png') no-repeat 0% 90%;
+    /*background: url('../images/icon_download.png') no-repeat 0% 90%;*/
 }
 
 .zip_download_link {
@@ -444,6 +444,23 @@ Full-Width Styles
 
 .tar_download_link:hover {
     background: url(../images/sprite_download.png) no-repeat top right;
+}
+
+.folder_link {
+    display: block;
+    float: right;
+    width: 90px;
+    height: 70px;
+    line-height: 85px;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    background: url(../images/sprite_link.png) no-repeat bottom;
+    margin-left: 10px;
+}
+
+.folder_link:hover {
+    background: url(../images/sprite_link.png) no-repeat top;
 }
 
 #main_content_wrap {
@@ -505,33 +522,4 @@ Small Device Styles
         background-color: #E8E8E8;
         color: green;
     }
-    /*******************************************************************************
-Styles added in by me
-*******************************************************************************/
-    /*
-    code {
-        background-color: #E8E8E8;
-        color: green;
-    }
-    pre {
-        background-color: #E8E8E8;
-    }
-    OL {
-        counter-reset: item;
-        padding-left: 10px;
-    }
-    LI {
-        display: block
-    }
-    LI:before {
-        content: counters(item, ".") ". ";
-        counter-increment: item
-    }
-    LI.default {
-        display: list-item
-    }
-    LI.default:before {
-        content: "";
-    }
-    */
 }
