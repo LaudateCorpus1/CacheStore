@@ -130,13 +130,13 @@
             <h2>
 <a id="architecture" class="anchor" href="#architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture</h2>
 
-            <p>CacheStore is a key-value system; it consists of two components; the in memory map (sorted or hash) and the persistence storage system. During the Bootstrap process, it loads all keys and meta data into the memory map. All values are lazy loaded from disk upon incoming request. It is implemented as a write-through cache and writes are durable. All values can be swapped between storage and memory. Data is replicated across designated nodes to assure reliability and the inclusion of clusters allows for load balancing. Nodes within clusters are homogeneous and are interchangeable. The bulk operation, range scan, cursor and query engine are built on top of the core system.</p>
+            <p>CacheStore is a key-value system; it consists of two components; the in memory map (sorted or hash) and the persistence storage system. During the Bootstrap process, it loads all keys and meta data into the memory map. All values are lazy loaded from disk upon incoming request. It is implemented as a write-through cache and writes are durable. All values can be swapped between storage and memory. Data is replicated across designated nodes to assure reliability and the inclusion of clusters allows for load balancing. Nodes within clusters are homogeneous and interchangeable. The bulk operation, range scan, cursor and query engine are built on top of the core system.</p>
 
             <h2>
 <a id="performance" class="anchor" href="#performance" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Performance</h2>
 
             <p>This is a high performance distributed storage system with replication on multiple nodes that is able to access keys from cached memory. Because of this, performance can be affected by, but not limited to, memory cache size, data size on node, and replication factor.</p>
-            <p>CacheStore averages 1 millisecond per record for random Read/Write using SSD and 4-5 milliseconds per record for Disk Read/Write. However, under special cases, it can reach even faster speeds. For example, uploading 1 million keys that use a 100,000 records per batch operation and a server side aggregation stored procedure can average 3-4 seconds to complete, or 3-4 microseconds per record.</p>
+            <p>CacheStore averages 1 millisecond per record for random Read/Write using SSD and 4-5 milliseconds per record for HDD Read/Write. However, under special cases, it can reach even faster speeds. For example, uploading 1 million keys that use a 100,000 records per batch operation and a server side aggregation stored procedure can average 3-4 seconds to complete, or 3-4 microseconds per record.</p>
 
             <h2>
 <a id="memory" class="anchor" href="#memory" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Memory</h2>
