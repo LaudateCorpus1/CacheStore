@@ -260,7 +260,7 @@ code {
 
 pre {
     width: 100%;
-    padding: 10px;
+    padding: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     overflow: auto;
     background-color: #E8E8E8;
@@ -268,7 +268,7 @@ pre {
 }
 
 code {
-    padding: 3px;
+    padding: 1px;
     margin: 0 3px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     background-color: #E8E8E8;
@@ -523,6 +523,9 @@ Small Device Styles
     .inner {
         min-width: 320px;
         max-width: 480px;
+        position: relative;
+        padding: 20px 10px;
+        margin: 0 auto;
     }
     #project_title {
         font-size: 32px;
@@ -548,7 +551,7 @@ Small Device Styles
     code,
     pre {
         min-width: 300px;
-        max-width: 4400px;
+        max-width: 440px;
         font-size: 11px;
         background-color: #E8E8E8;
         color: green;

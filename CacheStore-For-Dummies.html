@@ -29,6 +29,7 @@
         LI.default:before {
             content: "";
         }
+
     </style>
     <title>CacheStore For Dummies</title>
 </head>
@@ -288,8 +289,7 @@
             <p>
                 Put Trigger:
             </p>
-            <pre><code>
-public class PutTrigger implements com.sm.store.PutTrigger {
+            <pre><code>public class PutTrigger implements com.sm.store.PutTrigger {
     @Override
     public boolean beforePut(Key key, Value value, CacheStore store) {
         System.out.println("Before put");
@@ -300,30 +300,25 @@ public class PutTrigger implements com.sm.store.PutTrigger {
         System.out.println("After put");
         return value;
     }
-}
-            </code></pre>
+}</code></pre>
             <p>
                 Delete Trigger:
             </p>
-            <pre><code>
-public class DeleteTrigger implements com.sm.store.DeleteTrigger {
+            <pre><code>public class DeleteTrigger implements com.sm.store.DeleteTrigger {
     @Override
     public void beforeDelete(Key key, CacheStore store) {
         System.out.println("Before Delete");
     }
-}
-            </code></pre>
+}</code></pre>
             <p>
                 Once a trigger is created, it must be linked on startup (such as by placing into lib or dist folder). Also, since triggers are store-specific, each store that implements a trigger must define it in its stores.xml file.
             </p>
             <p>
                 XML tags in stores.xml:
             </p>
-            <pre><code>
-&lt;getTrigger&gt;com.mycompany.app.GetTrigger&lt;/getTrigger&gt;
+            <pre><code>&lt;getTrigger&gt;com.mycompany.app.GetTrigger&lt;/getTrigger&gt;
 &lt;putTrigger&gt;com.mycompany.app.PutTrigger&lt;/putTrigger&gt;
-&lt;deleteTrigger&gt;com.mycompany.app.DeleteTrigger&lt;/deleteTrigger&gt;
-            </code></pre>
+&lt;deleteTrigger&gt;com.mycompany.app.DeleteTrigger&lt;/deleteTrigger&gt;</code></pre>
 
             <h3>
 <a id="stored-procedures" class="anchor" href="#stored-procedures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2.4. Stored Procedures</h3>
