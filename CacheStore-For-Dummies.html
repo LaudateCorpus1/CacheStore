@@ -9,6 +9,9 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
     <link rel="stylesheet" href="./stylesheets/flama.css">
     <link rel="shortcut icon" href="./images/favicon.png">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    
     <style type="text/css">
         OL {
             counter-reset: item;
@@ -35,7 +38,7 @@
 </head>
 
 <body>
-
+<a href="#" class="back-to-top">Back to Top</a>
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
 
@@ -311,7 +314,7 @@
     }
 }</code></pre>
             <p>
-                Once a trigger is created, it must be linked on startup (such as by placing into lib or dist folder). Also, since triggers are store-specific, each store that implements a trigger must define it in its stores.xml file.
+                Once a trigger is created, it must be linked on startup (such as by placing it into lib or dist folder). Also, since triggers are store-specific, each store that implements a trigger must define it in its stores.xml file.
             </p>
             <p>
                 XML tags in stores.xml:
@@ -381,7 +384,7 @@ client.multiPuts(mGet);</code></pre>
             <h4>
 <a id="object-query" class="anchor" href="#object-query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.4.4. Object Query</h4>
             <p>Although queries are handled by the CacheStore server, they are initiated by CacheStore clients. CacheStore supports full Object Queries minus aggregation and joins. Please refer to the <a href=./Object-Query.html> Object Query Guide</a> for an object query overview and query statement syntax.</p>
-            <p>There are two main query functions, query and query4Json. Query returns a List of key value pairs while query4Json returns a List of Strings or a String that can be converted into Json objects.</p>
+            <p>There are two main query functions, query and query4Json. Query returns a List of key value pairs while query4Json returns a List of Strings or a String that can be converted into JSON objects.</p>
             <p>Remote/Scan:</p>
             <pre><code>List&lt;KeyValue&gt; queryResults = client.query("select name, age, height from Person where key# = 100");
 String query4JResults = client.query4Json("select name, age from Student");</code></pre>
@@ -704,7 +707,28 @@ port=6182</code></pre>
     </div>
 
 
+<script type="text/javascript">
+// create the back to top button
+$('body').prepend('<a href="#" class="back-to-top">Back to Top</a>');
 
+var amountScrolled = 1000;
+
+$(window).scroll(function() {
+	if ( $(window).scrollTop() > amountScrolled ) {
+		$('a.back-to-top').fadeIn('slow');
+	} else {
+		$('a.back-to-top').fadeOut('slow');
+	}
+});
+
+$('a.back-to-top, a.simple-back-to-top').click(function() {
+	$('html, body').animate({
+		scrollTop: 0
+	}, 700);
+	return false;
+});
+</script>
+    
 </body>
 
 </html>
