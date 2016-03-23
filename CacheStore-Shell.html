@@ -53,7 +53,25 @@
             <p>The CacheStore Shell is an interactive shell using Groovy. This shell lets users easily and instantly access and manage clusters and stores within CacheStore without having to set up separate programs.</p>
             <h2>
             <a id="shell-setup-and-usage" class="anchor" href="#shell-setup-and-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CacheStore Shell Setup and Usage</h2>
-            <p>The shell can be easily started with the script, CachestoreShell.sh from either the CacheStore Remote or CacheStore Cluster deployments. Start the shell with the command sh bin/CachestoreShell.sh. The CacheStore Shell is capable of all CacheStore Java commands as well as shell-specific shorthand commands.</p>
+            <p>The shell can be easily started with the script, CachestoreShell.sh from either the CacheStore Remote or CacheStore Cluster Deployments (found on the <a href=./Downloads.html>Downloads</a> page) Start the shell with the command sh bin/CachestoreShell.sh. The CacheStore Shell is capable of all CacheStore Java commands as well as shell-specific shorthand commands.</p>
+
+            <p>If you would like to utilize the CacheStore Shell without downloading a full Deployment, please download <a href=./downloads/CachestoreShell.sh>CachestoreShell.sh</a>, <a href=./downloads/Utils.groovy>Utils.groovy</a>, <a href=./downloads/startup.groovy>startup.groovy</a>, and the following dependencies:</p>
+            <pre><code>&lt;dependency&gt;
+	&lt;groupId&gt;org.codehaus.groovy&lt;/groupId&gt;
+	&lt;artifactId&gt;groovy-all&lt;/artifactId&gt;
+	&lt;version&gt;2.4.4&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;jline&lt;/groupId&gt;
+    &lt;artifactId&gt;jline&lt;/artifactId&gt;
+	&lt;version&gt;2.12&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;commons-cli&lt;/groupId&gt;
+	&lt;artifactId&gt;commons-cli&lt;/artifactId&gt;
+	&lt;version&gt;1.2&lt;/version&gt;
+&lt;dependency&gt;</code></pre>
+            <p>Note that CachestoreShell.sh may have to be edited if you are not following the CacheStore Remote and Cluster Deployment file structures.</p>
 
             <p>Once the shell is up and running, you can now connect to existing CacheStore servers that are running. Depending on what type of server you are connecting to and what type of client you want to create, you will need to use one of the following commands:</p>
             <pre><code>- open(url, store)

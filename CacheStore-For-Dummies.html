@@ -244,6 +244,9 @@
                 Take note that the argument opts are <code>{"‐configPath", "‐start" }</code> and are defaulted to
                 <code>{"./config", "true"}</code>.
             </p>
+            <p>
+                In addition, you must set the CLASSPATH and Java Memory settings. Because of this, it is HIGHLY recommended to start a server through the startup scripts provided in the Remote Deployment version of CacheStore, found <a href="https://github.com/viant/CacheStore-deploy">Here</a>.
+            </p>
             <h3>
 <a id="start-cluster" class="anchor" href="#start-cluster" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2.2. Start Cluster</h3>
             <p>
@@ -255,6 +258,9 @@
             <p>
                 Take note that the argument opts are <code>{"‐host","‐configPath","‐dataPath", "‐port", "replicaPort", "‐start", "‐freq"}</code> and are defaulted to <code>{"","",".", "0", "0", "true", "0"}</code>.
 
+            </p>
+            <p>
+                In addition, you must set the CLASSPATH and Java Memory settings. Because of this, it is HIGHLY recommended to start a server through the startup scripts provided in the Cluster Deployment version of CacheStore, found <a href="https://github.com/viant/CacheStore-deploy-cluster">Here</a>.
             </p>
             <p>
                 Each node in the cluster must individually start CacheStore and have the correct config files set up accordingly. Please refer to the Cluster Config Section below and to the Cluster User Guide for more information regarding node setup.
@@ -508,8 +514,7 @@ System.out.println(result);</code></pre>
             </p>
             <h3>
 <a id="serialization" class="anchor" href="#serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.6. Serialization</h3>
-            <p>CacheStore supports multiple types of serialization. It is defaulted to use Hessian, but can be implemented with custom serialization. Serialization must occur on both the server and client side so the serializer must be present on both ends.
-
+            <p>CacheStore supports multiple types of serialization for storing and retrieving objects. It is defaulted to use Hessian, but can be implemented with custom serialization.To specify what kind of serialization to use, change the &lt;className&gt; field in the <a href="#stores-xml">stores.xml File</a>. Serialization must occur on both the server and client side so the serializer must be present on both ends.
             </p>
             <h3>
 <a id="hessian-serialization" class="anchor" href="#hessian-serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.6.1. Hessian Serialization</h3>
