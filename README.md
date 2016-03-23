@@ -90,6 +90,6 @@ The source code is available under the Apache 2.0 license. We are actively looki
 
 [Open-source Admin: Lester Pi supervised by Mike Yang and Mickey Hsieh]
 
-[CacheStore Website: Lester Pi supervised by the Viant Data Engineering Team ]
+[CacheStore Website: Lester Pi supervised by the Viant Engineering Team ]
 
-[QA/Test: Viant Data Engineering Team]
+[QA/Test: Viant Engineering Team]
