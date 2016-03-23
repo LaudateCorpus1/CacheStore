@@ -380,6 +380,22 @@ Full-Width Styles
     border-bottom-right-radius: 2px;
 }
 
+#viant_banner {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    z-index: 10;
+    padding: 10px 10px 10px 50px;
+    color: #fff;
+    background: url('../images/icon_back.png') #0090ff no-repeat 5% 50%;
+    background-size: auto 100%;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
 #header_wrap {
     color: #fff;
     text-align: center;
