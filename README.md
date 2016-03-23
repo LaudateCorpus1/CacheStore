@@ -1,5 +1,5 @@
 ## What is CacheStore?
-CacheStore is a key-value hybrid storage system between memory cache and disk. It is high performance, horizontal scale and high availability. It was initially developed to support real time auction and high performance ad serving systems.
+CacheStore is a key-value hybrid storage system between memory cache and disk. It is high performance, horizontally scalable, and high availability. It was initially developed to support real time auction and high performance ad serving systems.
 
 So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.github.io/CacheStore/)
 
