@@ -355,7 +355,7 @@ Full-Width Styles
 *******************************************************************************/
 
 .outer {
-    width: 100%;
+    width: 105%;
 }
 
 .inner {
@@ -547,8 +547,8 @@ Small Device Styles
     }
     code,
     pre {
-        min-width: 320px;
-        max-width: 480px;
+        min-width: 300px;
+        max-width: 4400px;
         font-size: 11px;
         background-color: #E8E8E8;
         color: green;
