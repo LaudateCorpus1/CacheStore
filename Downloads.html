@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="./stylesheets/flama.css">
     <link rel="shortcut icon" href="./images/favicon.png">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script language="javascript" src="./javascripts/main.js"></script>
+
     <title>Downloads</title>
 </head>
 
@@ -127,27 +128,7 @@
         </footer>
     </div>
 
-<script type="text/javascript">
-// create the back to top button
-$('body').prepend('<a href="#" class="back-to-top">Back to Top</a>');
 
-var amountScrolled = 1000;
-
-$(window).scroll(function() {
-	if ( $(window).scrollTop() > amountScrolled ) {
-		$('a.back-to-top').fadeIn('slow');
-	} else {
-		$('a.back-to-top').fadeOut('slow');
-	}
-});
-
-$('a.back-to-top, a.simple-back-to-top').click(function() {
-	$('html, body').animate({
-		scrollTop: 0
-	}, 700);
-	return false;
-});
-</script>
 
 </body>
 
