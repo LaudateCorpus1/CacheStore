@@ -648,7 +648,17 @@ port=6182</code></pre>
 
             <h2>
 <a id="jmx-monitoring" class="anchor" href="#jmx-monitoring" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>5. JMX Monitoring</h2>
-            <p>CacheStore uses JMX monitoring.</p>
+            <p>CacheStore uses JMX monitoring. To implement and access JMX monitoring for CacheStore, first set up your jmxremote.password and jmxremote.access files.</p>
+            <p>Once those are set up, place the following code snippet into your startup script (we recommend using StartCachestore.sh):</p>
+            <pre><code>if [ -z $OPTS ]; then
+    OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8999 \
+        -Dcom.sun.management.jmxremote.protocol.port=8998 \
+        -Dcom.sun.management.jmxremote.ssl=false \
+        -Dcom.sun.management.jmxremote.authenticate=true \
+        -Dcom.sun.management.jmxremote.password.file=./bin/jmxremote.password \
+        -Dcom.sun.management.jmxremote.access.file=./bin/jmxremote.access"
+fi</code></pre>
+            <p>Once this has been setup, start CacheStore. Then you can open a new terminal and type jconsole to connect.</p>
             <p>More information on JMX monitoring can be <a href=http://docs.oracle.com/javase/7/docs/technotes/guides/management/agent.html>Here</a>.</p>
             <h2>
 <a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>6. Maven</h2>
