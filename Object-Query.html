@@ -66,7 +66,7 @@ public class Person implements Serializable {
     boolean male;
     Address address;
 
-    public Student(String name, int age, boolean male, Address address) {
+    public Person(String name, int age, boolean male, Address address) {
         this.name = name;
         this.age = age;
         this.male = male;
@@ -110,7 +110,7 @@ public class Person implements Serializable {
     }
     @Override
     public String toString() {
-        return "Student{" +
+        return "Person{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
                 ", male=" + male +
