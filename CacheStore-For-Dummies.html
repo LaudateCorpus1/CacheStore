@@ -467,7 +467,7 @@ scanCursor = client.nextCursor(scanCursor);
 System.out.println("ScanCursor: "+scanCursor.getResult());
 scanCursor.close();</code></pre>
             <h4>
-<a id="stored-procedures" class="anchor" href="#stored-procedures-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.4.7. Stored Procedures</h4>
+<a id="stored-procedures-2" class="anchor" href="#stored-procedures-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.4.7. Stored Procedures</h4>
             <p>Stored procedures are able to be defined using stored procedure files, the Invoker Class, and the invoke function. First, Some sort of stored procedure must be defined. In this example we will be using a StoreProc.groovy file (.groovy stored procedures are defaulted to config/script) to define our stored procedure:</p>
             <pre><code>class StoreProc implements StoreMap {
     String city = "irvine"
