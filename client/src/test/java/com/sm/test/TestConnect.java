@@ -1,35 +1,40 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+ */package com.sm.test;
 
-package com.sm.test;
-
+import com.sm.store.client.ClusterClient;
+import com.sm.store.client.ClusterClientFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.testng.annotations.Test;
+import voldemort.store.cachestore.Key;
+import voldemort.store.cachestore.voldeimpl.KeyValue;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.sm.transport.Utils.getOpts;
 
 public class TestConnect {
     private static final Log logger = LogFactory.getLog(TestConnect.class);
+
 
     public static void main(String[] args) throws Exception {
         String[] opts = new String[] {"-host","-port", "-times"};

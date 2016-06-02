@@ -27,6 +27,8 @@ functionalPredicate
     | 'substr' LPAREN objectField ',' expression RPAREN comparisonOperator expression            #SubstrExpr
     | 'existListOr' LPAREN  objectField ',' (objectField ',')? LPAREN expression (COMMA expression)* RPAREN RPAREN #ExistListOr
     | 'existListAnd' LPAREN  objectField ',' (objectField ',')? LPAREN expression (COMMA expression)* RPAREN RPAREN #ExistListAnd
+    | 'bitsOr' LPAREN objectField ',' LPAREN expression (COMMA expression)* RPAREN RPAREN #BitsOr
+    | 'bitsAnd' LPAREN objectField ',' LPAREN expression (COMMA expression)* RPAREN RPAREN #BitsAnd
     ;
 
 expression
@@ -68,7 +70,7 @@ BOOLEAN
     : 'true' | 'false'
     ;
 
-STRING :  '"' (ESC | ~["\\])* '"' ;
+STRING :  '"' (ESC | ~["\\])* '"' | '\'' (ESC | ~["\\])* '\'' ;
 
 fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
 fragment UNICODE : 'u' HEX HEX HEX HEX ;

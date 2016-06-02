@@ -1,21 +1,4 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+// Generated from /Users/mhsieh/java/dev/query/objectquery/src/main/resources/Predicate.g4 by ANTLR 4.5.1
 package com.sm.query.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -138,6 +121,20 @@ public interface PredicateVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExistListAnd(PredicateParser.ExistListAndContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code BitsOr}
+	 * labeled alternative in {@link PredicateParser#functionalPredicate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBitsOr(PredicateParser.BitsOrContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code BitsAnd}
+	 * labeled alternative in {@link PredicateParser#functionalPredicate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBitsAnd(PredicateParser.BitsAndContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ExpValue}
 	 * labeled alternative in {@link PredicateParser#expression}.

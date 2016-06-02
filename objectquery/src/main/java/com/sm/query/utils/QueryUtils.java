@@ -1,22 +1,3 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package com.sm.query.utils;
 
 
@@ -32,12 +13,65 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import static com.sm.query.utils.QueryUtils.Comparator.Equal;
+import static com.sm.query.utils.QueryUtils.Comparator.NotEqual;
 import static com.sm.query.utils.QueryUtils.Comparator.getComparator;
 
+/**
+ * Created by mhsieh on 12/22/14.
+ */
 public class QueryUtils {
     private static Log logger = LogFactory.getLog(QueryUtils.class);
     public final static String[] CLASS_PREFIX_ARY = { "com.sm.", "com.specificmedia.","test" };
     public static final String DOT4R = "\\." ;    //for regular express of split
+
+
+
+    public static  Pair<Object, String> findSource(String text, Object[] source, List<String> classNameList ) {
+        String[] ary = text.split(DOT4R);
+        //more than 1 source object
+        if ( source.length > 1 ) {
+            if ( ary.length > 1) {
+                Object obj = findInList(ary[0], source, classNameList);
+                //if (obj == null) throw new QueryException("can not find source object for " + ary[0]);
+                return new Pair<Object, String>(obj, getRestOf(ary));
+            }
+            else
+                throw new QueryException("sources has "+source.length+" but without alias prefix");
+        }
+        else {
+            if (ary.length > 1) {
+                if (ary[0].equals( classNameList.get(0)))
+                    return new Pair<Object, String>(source[0], getRestOf(ary));
+                else
+                    return new Pair<Object, String>(source[0], text);
+            }
+            else {
+                return new Pair<Object, String>(source[0], text);
+            }
+        }
+    }
+
+    public static String getRestOf(String[] ary) {
+        StringBuilder sb = new StringBuilder();
+        for (int i =1; i < ary.length ; i++) {
+            if ( i > 1 && i < ary.length )
+                sb.append("."+ary[i]);
+            else
+                sb.append(ary[i]);
+        }
+        return sb.toString();
+    }
+
+    public static  Object findInList(String className, Object[] source,  List<String> classNameList ) {
+        for ( int i = 0; i < classNameList.size() ; i++) {
+            if (classNameList.get(i) == null )
+                return null;
+            if ( classNameList.get(i).equals( className) )
+                return source[i];
+        }
+        return null;
+    }
 
     public static  Pair<Object,FieldInfo> findObjectId(String objectId, Object source, Map<String, ClassInfo> metaData){
         if (source == null ) {
@@ -241,10 +275,18 @@ public class QueryUtils {
                         throw new QueryException("invalid " + comparator.toString() + " for String");
                 }
             }
-            else if (left.getValue() == null && right.getValue() == null )
-                return true;
-            else
-                return false;
+            else if (left.getValue() == null && right.getValue() == null ) {
+                if (comparator == Equal)
+                    return true;
+                else
+                    return false;
+            }
+            else {
+                if ( comparator == NotEqual)
+                    return true;
+                else
+                    return false;
+            }
         }
         else if ( left.getType() == Type.NULL || right.getType() == Type.NULL) {
             switch ( comparator){
@@ -259,6 +301,16 @@ public class QueryUtils {
                 case Equal: return ((Boolean) left.getValue()).equals( ((Boolean) right.getValue()) );
                 case NotEqual: return ! ((Boolean) left.getValue()).equals( ((Boolean) right.getValue()) );
                 default: throw new QueryException("invalid "+comparator.toString()+" for boolean") ;
+            }
+        }
+        else if ( left.getType() == Type.ARRAY || right.getType() == Type.ARRAY) {
+            switch (comparator) {
+                case Equal:
+                    return Arrays.equals( (byte[]) left.getValue(), (byte[]) right.getValue());
+                case NotEqual:
+                    return !Arrays.equals( (byte[]) left.getValue(), (byte[]) right.getValue());
+                default:
+                    throw new QueryException("invalid " + comparator.toString() + " for byte arrays");
             }
         }
         else {
@@ -282,6 +334,7 @@ public class QueryUtils {
 
         }
     }
+
 
     public static boolean deterMineLong(long diff, Comparator comparator) {
         if ( diff == 0) {
@@ -808,5 +861,110 @@ public class QueryUtils {
         return toReturn;
     }
 
+
+    public static boolean getBoolean(byte[] b, int off) {
+        return b[off] != 0;
+    }
+
+    static char getChar(byte[] b, int off) {
+        return (char) (((b[off + 1] & 0xFF) << 0) +
+                ((b[off + 0]) << 8));
+    }
+
+    public static short getShort(byte[] b, int off) {
+        return (short) (((b[off + 1] & 0xFF) << 0) +
+                ((b[off + 0]) << 8));
+    }
+
+    public static int getInt(byte[] b, int off) {
+        return ((b[off + 3] & 0xFF) << 0) +
+                ((b[off + 2] & 0xFF) << 8) +
+                ((b[off + 1] & 0xFF) << 16) +
+                ((b[off + 0]) << 24);
+    }
+
+    public static float getFloat(byte[] b, int off) {
+        int i = ((b[off + 3] & 0xFF) << 0) +
+                ((b[off + 2] & 0xFF) << 8) +
+                ((b[off + 1] & 0xFF) << 16) +
+                ((b[off + 0]) << 24);
+        return Float.intBitsToFloat(i);
+    }
+
+    public static long getLong(byte[] b, int off) {
+        return ((b[off + 7] & 0xFFL) << 0) +
+                ((b[off + 6] & 0xFFL) << 8) +
+                ((b[off + 5] & 0xFFL) << 16) +
+                ((b[off + 4] & 0xFFL) << 24) +
+                ((b[off + 3] & 0xFFL) << 32) +
+                ((b[off + 2] & 0xFFL) << 40) +
+                ((b[off + 1] & 0xFFL) << 48) +
+                (((long) b[off + 0]) << 56);
+    }
+
+    public static double getDouble(byte[] b, int off) {
+        long j = ((b[off + 7] & 0xFFL) << 0) +
+                ((b[off + 6] & 0xFFL) << 8) +
+                ((b[off + 5] & 0xFFL) << 16) +
+                ((b[off + 4] & 0xFFL) << 24) +
+                ((b[off + 3] & 0xFFL) << 32) +
+                ((b[off + 2] & 0xFFL) << 40) +
+                ((b[off + 1] & 0xFFL) << 48) +
+                (((long) b[off + 0]) << 56);
+        return Double.longBitsToDouble(j);
+    }
+
+
+    public static void putBoolean(byte[] b, int off, boolean val) {
+        b[off] = (byte) (val ? 1 : 0);
+    }
+
+    public static void putChar(byte[] b, int off, char val) {
+        b[off + 1] = (byte) (val >>> 0);
+        b[off + 0] = (byte) (val >>> 8);
+    }
+
+    public static void putShort(byte[] b, int off, short val) {
+        b[off + 1] = (byte) (val >>> 0);
+        b[off + 0] = (byte) (val >>> 8);
+    }
+
+    public static void putInt(byte[] b, int off, int val) {
+        b[off + 3] = (byte) (val >>> 0);
+        b[off + 2] = (byte) (val >>> 8);
+        b[off + 1] = (byte) (val >>> 16);
+        b[off + 0] = (byte) (val >>> 24);
+    }
+
+    public static void putFloat(byte[] b, int off, float val) {
+        int i = Float.floatToIntBits(val);
+        b[off + 3] = (byte) (i >>> 0);
+        b[off + 2] = (byte) (i >>> 8);
+        b[off + 1] = (byte) (i >>> 16);
+        b[off + 0] = (byte) (i >>> 24);
+    }
+
+    public static void putLong(byte[] b, int off, long val) {
+        b[off + 7] = (byte) (val >>> 0);
+        b[off + 6] = (byte) (val >>> 8);
+        b[off + 5] = (byte) (val >>> 16);
+        b[off + 4] = (byte) (val >>> 24);
+        b[off + 3] = (byte) (val >>> 32);
+        b[off + 2] = (byte) (val >>> 40);
+        b[off + 1] = (byte) (val >>> 48);
+        b[off + 0] = (byte) (val >>> 56);
+    }
+
+    public static void putDouble(byte[] b, int off, double val) {
+        long j = Double.doubleToLongBits(val);
+        b[off + 7] = (byte) (j >>> 0);
+        b[off + 6] = (byte) (j >>> 8);
+        b[off + 5] = (byte) (j >>> 16);
+        b[off + 4] = (byte) (j >>> 24);
+        b[off + 3] = (byte) (j >>> 32);
+        b[off + 2] = (byte) (j >>> 40);
+        b[off + 1] = (byte) (j >>> 48);
+        b[off + 0] = (byte) (j >>> 56);
+    }
 }
 

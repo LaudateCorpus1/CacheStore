@@ -1,43 +1,37 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
-package com.sm.replica;
+ */package com.sm.replica;
 
 import com.sm.message.Header;
 import com.sm.message.Request;
 import com.sm.message.Response;
 import com.sm.store.OpType;
 import com.sm.store.StoreParas;
+//import com.sun.tools.internal.ws.processor.model.Response;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+//import org.omg.CORBA.Request;
 import voldemort.store.cachestore.Key;
 import voldemort.store.cachestore.Value;
 import voldemort.store.cachestore.voldeimpl.BlockValue;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sm.transport.Utils.getOpts;
-
-
-//import com.sun.tools.internal.ws.processor.model.Response;
-//import org.omg.CORBA.Request;
 
 
 public class TestReplicaClient {

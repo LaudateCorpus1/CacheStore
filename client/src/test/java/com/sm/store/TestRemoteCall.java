@@ -1,19 +1,18 @@
 /*
  *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
  */
 
@@ -23,6 +22,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sm.localstore.impl.HessianSerializer;
 import com.sm.message.Invoker;
+import com.sm.query.Result;
+import com.sm.query.utils.Column;
 import com.sm.store.client.ClusterClient;
 import com.sm.store.client.ClusterClientFactory;
 import com.sm.store.client.RemoteClientImpl;
@@ -39,14 +40,16 @@ import voldemort.store.cachestore.Value;
 import voldemort.store.cachestore.voldeimpl.KeyValue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.sm.transport.Utils.getOpts;
 
 public class TestRemoteCall {
     private static final Log logger = LogFactory.getLog(TestRemoteCall.class);
 
-    //@Test
+    ////@Test
     public void testStoreProc() {
         RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "store");
         Invoker invoker = new Invoker("StoreProc.groovy", "sayHello", new Object[] {"test" } );
@@ -56,31 +59,22 @@ public class TestRemoteCall {
 
     //@Test(groups ="{Select}")
     public void testSelect(){
-        Person.Address address = new Person.Address( new Person.Street(4813, "corsica dr"), 90630, "cypress");
-        Person person = new Person("mickey", 30, 4000.00, true, null);
-        String queryStr = "select  address.zip , name, age, male, address.city, address.street from Person where address.zip > 90320 ";
-        //queryStr = "select  name, age, male from Person ";
-        RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "store");
-        System.out.println("size "+client.query( queryStr).size());
-        String json = client.query4Json("select  name, age, male, address.zip from Person where address.city = \"cypress\" ");
-        System.out.println( "json :"+json);
+        RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "userCrm", false, 900000L);
+        String str = client.query4Json("select country from User where key# = strToBytes(\"country\")  ");
+        System.out.println( "query result :"+str);
+//        Person.Address address = new Person.Address( new Person.Street(4813, "corsica dr"), 90630, "cypress");
+//        Person person = new Person("mickey", 30, 4000.00, true, null);
+//        String queryStr = "select  address.zip , name, age, male, address.city, address.street from Person where address.zip > 90320 ";
+//        //queryStr = "select  name, age, male from Person ";
+//        RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "store");
+//        System.out.println("size "+client.query( queryStr).size());
+//        String json = client.query4Json("select  name, age, male, address.zip from Person where address.city = \"cypress\" ");
+//        System.out.println( "json :"+json);
+//        queryStr = "select name from Person ";
 //        for ( int i = 0 ; i < 10 ; i++) {
-//            client.put(Key.createKey(i), person);
 //            Value value =client.selectQuery(Key.createKey(i), queryStr );
 //            System.out.println( "i "+i+" "+value.getData().toString());
 //        }
-//        queryStr = "replace Person set name=\"Test\", age = 10, male = false, address = { zip = 90630, city = \"cypress\" } ; ";
-//        for ( int i = 0 ; i < 10 ; i++) {
-//            client.put(Key.createKey(i), person);
-//            client.updateQuery(Key.createKey(i), new RemoteValue(null, 0, (short) 0), queryStr);
-//            Value value = client.get(Key.createKey(i));
-//            System.out.println( "i "+i+" "+value.getData().toString());
-//        }
-        queryStr = "select name from Person ";
-        for ( int i = 0 ; i < 10 ; i++) {
-            Value value =client.selectQuery(Key.createKey(i), queryStr );
-            System.out.println( "i "+i+" "+value.getData().toString());
-        }
 
     }
 
@@ -88,11 +82,28 @@ public class TestRemoteCall {
     public void testPopulate(){
         HessianSerializer serializer = new HessianSerializer();
         RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "store");
-        for ( int i = 0 ; i < 30 ; i++) {
-            //new Person.Address(new Person.Street(i, "test-1"+i ), (90300+i), "cypress");
-            Person person = new Person("mickey", i, 4000.00, true, new Person.Address(new Person.Street(i, "test-1"+i ), (90300+i), "cypress"));
+        for ( int i = 0 ; i < 200 ; i++) {
+            new Person.Address(new Person.Street(i, "test-1"+i ), (90300+i), "cypress");
+            Person person = new Person("mickey", i, (i*10+300.00) , true, new Person.Address(new Person.Street(i, "test-1"+i ), (90300+i), "cypress"));
+
             client.put(Key.createKey(i), person);
         }
+        client.close();
+    }
+
+    //@Test
+    public void testPopulateColumn(){
+        RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "column");
+        Map<String, Column> columnStore = new HashMap<String, Column>();
+        //HessianSerializer serializer = new HessianSerializer();
+        client.put(Key.createKey("ncsData"), columnStore  );
+        //Column column = new Column("carMake", Result.Type.BYTE, 0);
+        columnStore.put("carMake", new Column("carMake", Result.Type.BYTE, 0));
+        columnStore.put("carClass", new Column("carClass", Result.Type.BYTE, 1));
+        columnStore.put("carAge", new Column("carAge", Result.Type.BYTE, 2));
+        columnStore.put("carInsurance", new Column("carInsurance", Result.Type.BYTE, 3));
+        columnStore.put("demoHomeOwner", new Column("demoHomeOwner", Result.Type.BYTE, 4));
+        client.put(Key.createKey("marketingSource"), columnStore  );
         client.close();
     }
 
@@ -107,13 +118,14 @@ public class TestRemoteCall {
 
     //@Test(groups = {"Cluster"})
     public void testCluster() {
-        ClusterClientFactory ccf = ClusterClientFactory.connect("localhost:6172", "userCrm");
+        ClusterClientFactory ccf = ClusterClientFactory.connect("localhost:7100", "store");
         ClusterClient client = ccf.getDefaultStore(3000);
-        client.get(Key.createKey(20));
+        Value value = client.get(Key.createKey(10));
+        System.out.println(value.getData());
 
     }
 
-    //@Test(groups = {"FullQuery"})
+    ////@Test(groups = {"FullQuery"})
     public void testFullQuery() throws Exception {
         RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "store");
         String json = client.query4Json("select  name, age, male, address from Person where key# >= 2 and key# <= 10");
@@ -136,7 +148,7 @@ public class TestRemoteCall {
         System.out.println("multi removes "+ton.toString());
         List<KeyValue> list = new ArrayList<KeyValue>(times);
         for ( int i= 0; i < times; i ++ ) {
-            Value value = new RemoteValue( serializer.toBytes(person) , 0, (short) 0);
+            Value value = new RemoteValue( person , 0, (short) 0);
             list.add(new KeyValue(Key.createKey(i),value));
         }
         List<KeyValue> toReturn = client.multiPuts( list);
@@ -148,6 +160,24 @@ public class TestRemoteCall {
         }
         List<KeyValue> keyValueList = client.multiGets(keyList);
         toReturn = client.multiUpdateQuery(keyList, "replace Person set age=20, income=1000.00 ");
+        keyValueList = client.multiGets(keyList);
+        System.out.println(keyValueList.toString());
+
+    }
+
+    //@Test
+    public void testMultiPutQuery() {
+        HessianSerializer serializer = new HessianSerializer();
+        ScanClientImpl client = new ScanClientImpl("localhost:7100", null, "store");
+        int times = 30;
+        List<Key> keyList = new ArrayList<Key>(times);
+        for ( int i= 0; i < times; i ++ ) {
+            keyList.add(Key.createKey(i));
+        }
+        List<KeyValue> keyValueList = client.multiGets(keyList);
+        keyValueList = client.multiSelectQuery(keyList, "select * from Person");
+        System.out.println( keyValueList.toString());
+        List<KeyValue> toReturn = client.multiUpdateQuery(keyList, "replace Person set age=20, income=1000.00 ");
         keyValueList = client.multiGets(keyList);
         System.out.println(keyValueList.toString());
 
@@ -170,13 +200,17 @@ public class TestRemoteCall {
 
     //@Test(groups ="{remoteProc}")
     public void testRemoteCall() {
-        RemoteClientImpl client = new NTRemoteClientImpl("192.168.19.56:6172", null, "store");
-        Invoker invoker = new Invoker("com.sm.crm.CrmMatch","getUserLists", new Object[] {"./file/01/oldEmailHashs2K.csv120", "ip", new Integer(100)} );
-        Object obj = client.invoke( invoker);
-        System.out.println(obj.toString());
+        HessianSerializer serializer = new HessianSerializer();
+        RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "column");
+        Value value = client.get(Key.createKey("marketingSource") );
+        //Object object = serializer.toObject((byte[]) value.getData());
+        System.out.println(value.getData());
+//        Invoker invoker = new Invoker("com.sm.crm.CrmMatch","getUserLists", new Object[] {"./file/01/oldEmailHashs2K.csv120", "ip", new Integer(100)} );
+//        Object obj = client.invoke( invoker);
+//        System.out.println(obj.toString());
     }
 
-    //@Test(groups ="{remoteProc}")
+    ////@Test(groups ="{remoteProc}")
     public void testSsusRemoteCall() {
         RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "store");
         Invoker invoker = new Invoker("com.sm.crm.SSUSProfile","getJsonB2C", new Object[] { new Long(3279152402342471027L) } );
@@ -185,7 +219,7 @@ public class TestRemoteCall {
     }
 
     public final static int times = 20;
-    //@Test(groups ="{remoteProc}")
+    ////@Test(groups ="{remoteProc}")
     public void testGZRemoteCall() {
         RemoteClientImpl client = new GZRemoteClientImpl("localhost:6240", null, "test");
         int  i =0;
@@ -200,7 +234,7 @@ public class TestRemoteCall {
         System.out.println("i ="+i +"  avg micro sec "+ dur/1000/times +" null "+c);
     }
 
-    //@Test(groups ="{remoteProc}")
+    ////@Test(groups ="{remoteProc}")
     public void testNTRemoteCall() {
         RemoteClientImpl client = new NTRemoteClientImpl("localhost:6240,remote1:6240", null, "test");
         int  i =0;

@@ -1,33 +1,18 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package com.sm.query.impl;
 
 import com.sm.query.Predicate;
 import com.sm.query.Result;
 import com.sm.query.utils.QueryException;
 
+/**
+ * Created by mhsieh on 7/18/15.
+ */
 public class Condition implements Predicate {
     String value;
     Predicate left;
     Predicate right;
     boolean isAllTrue =false;
+    boolean notExist = false;
 
 
     public Condition(String value, Predicate left, Predicate right) {
@@ -43,6 +28,11 @@ public class Condition implements Predicate {
 
     public boolean isAllTrue() {
         return isAllTrue;
+    }
+
+    @Override
+    public boolean isNotExist() {
+        return notExist;
     }
 
     public void setAllTrue(boolean isAllTrue) {
@@ -79,6 +69,11 @@ public class Condition implements Predicate {
         return value.equals("and") || value.equals("or") ;
     }
 
+    public void setNotExist(boolean notExist) {
+        this.notExist = notExist;
+    }
+
+
     @Override
     public boolean isKey() {
         if ( left != null )
@@ -98,6 +93,8 @@ public class Condition implements Predicate {
                 "value='" + value + '\'' +
                 ", left=" + left +
                 ", right=" + right +
+                ", isAllTrue=" + isAllTrue +
+                ", notExist=" + notExist +
                 '}';
     }
 }

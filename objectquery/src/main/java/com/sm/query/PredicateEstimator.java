@@ -1,22 +1,3 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package com.sm.query;
 
 import com.sm.query.parser.PredicateBaseListener;
@@ -34,6 +15,9 @@ import org.apache.commons.logging.LogFactory;
 import java.io.StringReader;
 import java.util.Stack;
 
+/**
+ * Created by mhsieh on 1/22/16.
+ */
 public class PredicateEstimator extends PredicateBaseListener {
 
     private static final Log logger = LogFactory.getLog(PredicateEstimator.class);
@@ -45,6 +29,9 @@ public class PredicateEstimator extends PredicateBaseListener {
     private Stack<String> idStack = new Stack<String>();
     private Stack<Source> sourceStack = new Stack<Source>();
     public static double IGNORE = -1.00;
+    public final static String AND = "and";
+    public final static String OR = "or";
+    public final static String SRC =".src.";
 
     /**
      * dataMap consist of String Key  (Attribute.Value) as Key, Value is Double to represent as %
@@ -119,7 +106,7 @@ public class PredicateEstimator extends PredicateBaseListener {
         return sourceStack;
     }
 
-    public Double getPopulation() {
+    public Double getPopulation(String src) {
         if ( sourceStack.empty()) {
             if ( ! idStack.isEmpty()) {
                 Source source = findSource( idStack.peek() );
@@ -127,11 +114,12 @@ public class PredicateEstimator extends PredicateBaseListener {
                 return dataMap.get( source.value);
             }
             else {
-                logger.info("source map is empty, queryStr " + queryStr);
-                return dataMap.get(Source.CRM.value);
+                logger.info("source map is empty, queryStr " + queryStr+" using src "+src);
+                return dataMap.get(src);
             }
         } else {
             Source sce = sourceStack.peek();
+            logger.info("source "+sce.value+" passing src "+src);
             return dataMap.get(sce.getValue());
         }
     }
@@ -206,20 +194,20 @@ public class PredicateEstimator extends PredicateBaseListener {
         System.out.println(objectId+" "+op+" "+sb.toString());
     }
 
-    @Override
-    public void exitExistExpr(PredicateParser.ExistExprContext ctx) {
-        String objectId;
-        if ( ctx.objectField().size() == 1 ) {
-            objectId = ctx.objectField(0).getText();
-        }
-        else {
-            objectId = ctx.objectField(1).getText();
-        }
-        Result result = valueStack.pop();
-        StringBuffer sb = new StringBuffer();
-        double total = 0.00 ;
-        estimateStack.push( total);
-    }
+//    @Override
+//    public void exitExistExpr(PredicateParser.ExistExprContext ctx) {
+//        String objectId;
+//        if ( ctx.objectField().size() == 1 ) {
+//            objectId = ctx.objectField(0).getText();
+//        }
+//        else {
+//            objectId = ctx.objectField(1).getText();
+//        }
+//        Result result = valueStack.pop();
+//        StringBuffer sb = new StringBuffer();
+//        double total = 0.00 ;
+//        estimateStack.push( total);
+//    }
 
     private double findDistributionValue(String key) {
         //idStack.push( key);
@@ -234,8 +222,8 @@ public class PredicateEstimator extends PredicateBaseListener {
     }
 
 
-    @Override public void enterExistListOr(PredicateParser.ExistListOrContext ctx) {
-    }
+//    @Override public void enterExistListOr(PredicateParser.ExistListOrContext ctx) {
+//    }
 
     @Override
     public void exitNotPredicate(PredicateParser.NotPredicateContext ctx) {
@@ -259,6 +247,10 @@ public class PredicateEstimator extends PredicateBaseListener {
     }
 
     public final static String NCS ="foods,beverages,other,";
+    public final static String MS = "ms,";
+    public final static String UK = "uk.";
+    public final static String US = "us.";
+    public final static String EXP = "exp,";
     private double findInterSec(String match, double left, double right) {
        if ( match.length() == 0)
            return left * right;
@@ -272,7 +264,7 @@ public class PredicateEstimator extends PredicateBaseListener {
     }
 
     public static enum Source {
-        NCS("ncs"), CRM("crm") ;
+        NCS("ncs"), CRM("crm"), MS("ms"), UK("uk"), US("us"), EXP("exp") ;
 
         final String value;
         Source(String value) {
@@ -281,6 +273,16 @@ public class PredicateEstimator extends PredicateBaseListener {
 
         public String getValue() {
             return value;
+        }
+
+
+        public static Source getSource(String source) {
+            if ( source.equals("ncs")) return NCS;
+            else if ( source.equals("ms")) return MS;
+            else if ( source.equals("exp")) return EXP;
+            else if ( source.equals("uk")) return UK;
+            else if ( source.equals("us")) return US;
+            else return CRM;
         }
 
     }
@@ -292,6 +294,14 @@ public class PredicateEstimator extends PredicateBaseListener {
         else {  //it is a simple field
             if (NCS.indexOf(objectId + ",") >= 0)
                 return Source.NCS;
+            else if (MS.indexOf(objectId+",") >= 0)
+                return Source.MS;
+            else if (objectId.indexOf(US) >= 0)
+                return Source.US;
+            else if (objectId.indexOf(UK) >= 0)
+                return Source.UK;
+            else if ((EXP.indexOf(objectId+",")) >= 0 )
+                return Source.EXP;
             else
                 return Source.CRM;
         }
@@ -301,7 +311,7 @@ public class PredicateEstimator extends PredicateBaseListener {
         if ( left == right ) {
             return left;
         } else {
-            if ( operator.equals("and")) {
+            if ( operator.equals(AND)) {
                 return findAnd( left, right);
             } else { // or
                 return findOr(left, right);
@@ -310,18 +320,40 @@ public class PredicateEstimator extends PredicateBaseListener {
     }
 
     protected Source findAnd(Source left, Source right) {
-        if ( left == Source.NCS ) return left;
-        else if ( right == Source.NCS ) return right;
+        if ( left == Source.NCS  || right == Source.NCS ) return Source.NCS;
+        else if ( left == Source.MS  || right == Source.MS ) return Source.MS;
+//        else if (left == Source.UK  || right == Source.UK ) return Source.UK;
+//        else if (left == Source.US  || right == Source.US ) return Source.US;
         else {
-            return Source.CRM;
+            String key = left.getValue() +"."+AND+SRC+right.getValue();
+
+            if ( dataMap.getObject(key) != null ) {
+                String src = (String) dataMap.getObject(key);
+                return Source.getSource( src);
+            }
+            else {
+                logger.warn(key+" is not in the map");
+                return Source.CRM;
+            }
         }
     }
 
     protected Source findOr(Source left, Source right) {
-        if ( left == Source.CRM ) return left;
-        else if ( right == Source.CRM ) return right;
+        if ( left == Source.CRM  || right == Source.CRM  ) return Source.CRM;
+        else if ( left == Source.US  || right == Source.US  ) return Source.US;
+        else if ( left == Source.UK  || right == Source.UK  ) return Source.UK;
+//        else if ( left == Source.NCS  || right == Source.NCS  ) return Source.NCS;
+//        else if ( left == Source.MS  || right == Source.MS ) return Source.MS;
         else {
-            return Source.NCS;
+            String key = left.getValue() +"."+OR+SRC+right.getValue();
+            if ( dataMap.get( key) != null) {
+                String src = (String) dataMap.getObject(key);
+                return Source.getSource( src);
+            }
+            else {
+                logger.warn(key+" is not in the map");
+                return Source.CRM;
+            }
         }
     }
 
@@ -364,14 +396,27 @@ public class PredicateEstimator extends PredicateBaseListener {
         return sb.toString();
     }
 
+    /**
+     * need to cover all permutation
+     * @param source
+     * @param target
+     * @param op
+     * @return
+     */
     private double getRatio(Source source, Source target, String op){
-        if ( source == Source.CRM && target == Source.NCS &&  op.equals("or"))
+        if ( source == Source.CRM && target == Source.NCS &&  op.equals(OR))
             return NCS_CRM;
-        else if ( source == Source.NCS && target == Source.CRM && op.equals("and"))
+        else if ( source == Source.NCS && target == Source.CRM && op.equals(AND))
             return 1.00;
         else {
-            logger.warn("uncover case "+source+" target "+target);
-            return 1.00;
+            String key = source.getValue()+"."+op+"."+target.getValue();
+            Double dl = dataMap.get(key);
+            if ( dl == null ) {
+                logger.warn(key +" ratio not found in map return 1.00");
+                return 1.00;
+            }
+            else
+                return dl;
         }
 
     }
@@ -408,7 +453,7 @@ public class PredicateEstimator extends PredicateBaseListener {
         }
         sourceStack.push( source);
         double interSec = findInterSec( match, left, right );
-        if ( op.equals("or")) {
+        if ( op.equals(OR)) {
             System.out.println("Or left "+left+ " right "+right );
             double value = (left+right) - interSec ;
             estimateStack.push( checkValue(value) );

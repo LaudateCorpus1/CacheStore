@@ -1,23 +1,20 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
-package com.sm.test;
+ */package com.sm.test;
 
 import com.sm.localstore.impl.HessianSerializer;
 import com.sm.message.Invoker;
@@ -88,7 +85,7 @@ public class TestClusterClient {
     }
 
     public List<Key> createKeyList(int no) {
-        Key key = Key.createKey("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        Key key = Key.createKey("A");
         List<Key> list = new ArrayList<Key>(no);
         for ( int i = 0; i < no ; i ++) {
             list.add(key);
@@ -113,7 +110,7 @@ public class TestClusterClient {
 
     public static void main(String[] args) throws Exception {
         String[] opts = new String[] {"-configPath", "-url", "-store", "-times", "-nio", "-size"};
-        String[] defaults = new String[] {"", "localhost:6172", "store", "2", "true", "2000"};
+        String[] defaults = new String[] {"", "localhost:7100", "store", "2", "true", "2000"};
         String[] paras = getOpts( args, opts, defaults);
 
         String configPath = paras[0];
@@ -131,10 +128,10 @@ public class TestClusterClient {
         ClusterClient client = ccf.getDefaultStore(3000);
         TestClusterClient testClient = new TestClusterClient( client);
         client.put(Key.createKey("test-0"), "test-0");
-//        testClient.testMultiPut(500);
-//        testClient.testMultiGet(500);
-//        testClient.testScan(500);
-//        testClient.testScanCursor(500);
+        testClient.testMultiPut(500);
+        testClient.testMultiGet(500);
+        testClient.testScan(500);
+        testClient.testScanCursor(500);
         Value v = client.get(Key.createKey("test-0")) ;
         System.out.println( v.getData() );
         //ccf.reloadClusterClient();

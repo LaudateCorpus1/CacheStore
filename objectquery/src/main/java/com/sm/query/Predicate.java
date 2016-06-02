@@ -1,28 +1,10 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package com.sm.query;
 
-import com.sm.query.utils.QueryException;
-
+/**
+ * Created by mhsieh on 7/18/15.
+ */
 public interface Predicate {
-    public enum Operator { And, Or, In, Equal, NotEqual, Greater, GreaterEQ, Less, LessEQ, Range ;
+    public enum Operator { And, Or, In, Equal, NotEqual, Greater, GreaterEQ, Less, LessEQ, Range, Function ;
         public static Operator getOperator(String op ) {
             if ( op.equals("and")) return And;
             else if ( op.equals("or")) return Or;
@@ -34,7 +16,8 @@ public interface Predicate {
             else if ( op.equals(">=")) return GreaterEQ;
             else if ( op.equals("<=")) return LessEQ;
             else if ( op.equals("[]")) return Range;
-            else throw new QueryException("unknown ops "+op);
+            else return Function ;
+            //else throw new QueryException("unknown ops "+op);
         }
     }
 
@@ -47,4 +30,5 @@ public interface Predicate {
     boolean isKey();
     Result.Type getType();
     boolean isAllTrue();
+    boolean isNotExist();
 }

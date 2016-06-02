@@ -1,30 +1,34 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+ */package com.sm.store;
 
-package com.sm.store;
-
+import com.sm.localstore.impl.HessianSerializer;
+import com.sm.storage.Serializer;
+import com.sm.store.utils.ClassBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import voldemort.store.cachestore.BlockSize;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class StoreConfig implements Serializable {
+    protected static final Log logger = LogFactory.getLog(StoreConfig.class);
+
     private String store;
     private String dataPath;
     //log frequency
@@ -48,6 +52,8 @@ public class StoreConfig implements Serializable {
     protected List<String> pstReplicaUrl;
     //protected String fileName;
     protected String purgeClass;
+    private String serializeClass;
+    private transient Serializer serializer;
 
     public StoreConfig(String store, String dataPath, int freq, List<String> replicaUrl) {
         this(store, dataPath, freq, replicaUrl, 10, true, 0);
@@ -205,8 +211,8 @@ public class StoreConfig implements Serializable {
         return logPath;
     }
 
-    public String getSerializer() {
-        return null;
+    public Serializer getSerializer() {
+        return this.serializer ;
     }
 
     public void setLogPath(String logPath) {
@@ -236,4 +242,26 @@ public class StoreConfig implements Serializable {
     public void setPurgeClass(String purgeClass) {
         this.purgeClass = purgeClass;
     }
+
+    public String getSerializeClass() {
+        return serializeClass;
+    }
+
+    /**
+     * Create Serializer instance from class name string
+     * @param serializeClass
+     */
+    public void setSerializeClass(String serializeClass) {
+        this.serializeClass = serializeClass;
+        if ( serializeClass != null ) {
+            logger.info("generate serializer using "+serializeClass);
+            this.serializer = (Serializer) ClassBuilder.createInstance(serializeClass);
+        }
+        else {
+            logger.info("generate serializer using  HessianSerializer");
+            this.serializer = new HessianSerializer();
+        }
+    }
+
+
 }

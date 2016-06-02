@@ -1,23 +1,20 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
-package com.sm.store.server;
+ */package com.sm.store.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +29,6 @@ import com.sm.query.utils.QueryException;
 import com.sm.storage.Serializer;
 import com.sm.store.*;
 import com.sm.store.client.RemoteValue;
-import com.sm.store.server.RemoteStore;
 import com.sm.utils.TupleThree;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,8 +48,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import static com.sm.store.StoreParas.*;
 import static com.sm.store.Utils.*;
-
-
 public class StoreCallBack implements TCPCallBack {
 
     protected static final Log logger = LogFactory.getLog(StoreCallBack.class);
@@ -93,15 +87,24 @@ public class StoreCallBack implements TCPCallBack {
             storeList.add( new TupleThree<String, String, Integer>(storeConfig.getStore(), storeConfig.getDataPath(),
                     storeConfig.getMode() ) );
             delay = storeConfig.isDelay();
-        }
-        init(delay);
-        //add trigger routine
-        for (StoreConfig storeConfig : remoteConfig.getConfigList() ) {
-            RemoteStore store = storeMaps.get(storeConfig.getStore());
-            if ( store != null)
+            try {
+                RemoteStore store = new RemoteStore(storeConfig.getStore(), storeConfig.getSerializer(), storeConfig.getDataPath(), delay,
+                        null,  storeConfig.getMode());
+                logger.info("put " +storeConfig.getStore()+ " path "+ storeConfig.getDataPath() );
+                storeMaps.put( storeConfig.getStore(), store);
+                if ( delay) {
+                    //passing parameter in the future, default to 2
+                    logger.info("startWriteThread =2");
+                    store.startWriteThread(2);
+                }
+                //add trigger routine
                 store.setupTrigger2Cache(storeConfig);
-            else
-                logger.warn( storeConfig.getStore()+" setup trigger failure");
+
+            } catch (Exception ex) {
+                // swallow exception
+                logger.error(storeConfig.getStore()+" "+ex.getMessage(), ex);
+            }
+
         }
     }
 
@@ -419,9 +422,9 @@ public class StoreCallBack implements TCPCallBack {
         String queryStr = new String( (byte[]) value.getData());
         Value v = store.get(key);
         if ( v == null ) throw new StoreException("value is null key "+key.toString() );
-        Object source = serializer.toObject( (byte[]) v.getData());
+        Object source = store.getSerializer().toObject( (byte[]) v.getData());
         ObjectQueryVisitorImpl visitor = new ObjectQueryVisitorImpl(queryStr);
-        v.setData( serializer.toBytes(visitor.runQuery(source)));
+        v.setData( store.getSerializer().toBytes(visitor.runQuery(source)));
         return v;
     }
 
@@ -429,11 +432,11 @@ public class StoreCallBack implements TCPCallBack {
         String queryStr = new String( (byte[]) value.getData());
         Value v = store.get(key);
         if ( v == null ) throw new StoreException("value is null key "+key.toString() );
-        Object source = serializer.toObject( (byte[]) v.getData());
+        Object source = store.getSerializer().toObject( (byte[]) v.getData());
         ObjectQueryVisitorImpl visitor = new ObjectQueryVisitorImpl(queryStr);
         visitor.runQuery(source);
         //v.setVersion( v.getVersion() +1);
-        value.setData( serializer.toBytes( visitor.getSource()));
+        value.setData( store.getSerializer().toBytes( visitor.getSource()));
         store.put( key, value);
     }
 
@@ -540,7 +543,7 @@ public class StoreCallBack implements TCPCallBack {
             else {
                 list = store.multiGets(keyParas.getList());
                 if ( keyParas.getOpType() == OpType.MultiSelectQuery)
-                    keyValueParas = processQueryStr( list, keyParas.getQueryStr());
+                    keyValueParas = processQueryStr( store, list, keyParas.getQueryStr());
                 else
                     keyValueParas = new KeyValueParas(keyParas.getOpType(), list);
             }
@@ -561,59 +564,80 @@ public class StoreCallBack implements TCPCallBack {
 
     protected List<KeyValue> processFullQuery(QueryIterator queryIterator, String queryStr, RemoteStore store){
         List<KeyValue> list = new ArrayList<KeyValue>();
-        int empty = 0, error = 0 ;
+        int empty = 0, error = 0 , s= 0 ;
         QueryVisitorImpl visitor = new QueryVisitorImpl(queryStr);
+        int selectSize = getMaxSelectSize(visitor);
         while ( queryIterator.hasNext()) {
             try {
                 Pair<Key, Value> pair = queryIterator.next();
                 if (pair.getSecond() != null && pair.getSecond().getData() != null) {
-                    Object source = serializer.toObject((byte[]) pair.getSecond().getData());
+                    Object source = store.getSerializer().toObject((byte[]) pair.getSecond().getData());
                     visitor.setKey( pair.getFirst() );
                     Object result = visitor.runQuery(source);
                     if ( result != null ) {
+                        s++;
                         if (visitor.getStatementType() == QueryVisitorImpl.StatementType.Select) {
                             //need to create a new instance of Value, but use RemoteValue, not CacheValue
                             Value value = new RemoteValue(result, pair.getSecond().getVersion(), pair.getSecond().getNode());
                             list.add(new KeyValue(pair.getFirst(), value));
                             // check size
-                            if (list.size() > MAX_SIZE) {
-                                logger.warn("list size exceed "+MAX_SIZE+" for "+queryStr+" store "+store.getStore().getNamePrefix());
-                                return list;
+                            if (list.size() > selectSize) {
+                                logger.warn("list size exceed "+selectSize+" for "+queryStr+" store "+store.getStore().getNamePrefix());
+                                break;
                             }
                         } else {
                             //deserialize the data and increment version
-                            pair.getSecond().setData(serializer.toBytes(visitor.getSource()));
+                            pair.getSecond().setData(store.getSerializer().toBytes(visitor.getSource()));
                             pair.getSecond().setVersion(pair.getSecond().getVersion() + 1);
                             store.put(pair.getFirst(), pair.getSecond());
                         }
                     }
-                    else empty++;
-                } else empty++;
+                    else
+                        empty++;
+                } else
+                    empty++;
             } catch (Exception ex) {
                 //swallow exception
                 error++;
                 logger.error( ex.getMessage(), ex);
             }
         }
-        logger.info("error "+error+" null value "+empty+ " for "+queryStr);
+        logger.info("error "+error+" empty "+empty+" success "+s + " for "+queryStr);
         return list;
     }
 
-    protected KeyValueParas processQueryStr(List<KeyValue> list, String queryStr) {
-        return processQueryStr(list, queryStr, OpType.MultiSelectQuery);
+    /**
+     * default visitor limitRec = -1, other wise it will be set by limit record;
+     * no limit record should exceed MAX_SZIE, if limit record < MAX_SIZE
+     * @param visitor
+     * @return
+     */
+    private int getMaxSelectSize(QueryVisitorImpl visitor) {
+        if ( visitor.getLimitRec() < 0 )
+            return MAX_SIZE;
+        else {
+            if ( visitor.getLimitRec() < MAX_SIZE )
+                return visitor.getLimitRec();
+            else
+                return MAX_SIZE;
+        }
     }
 
-    protected KeyValueParas processQueryStr(List<KeyValue> list, String queryStr, OpType opType) {
+    protected KeyValueParas processQueryStr(RemoteStore store, List<KeyValue> list, String queryStr) {
+        return processQueryStr(store, list, queryStr, OpType.MultiSelectQuery);
+    }
+
+    protected KeyValueParas processQueryStr(RemoteStore store, List<KeyValue> list, String queryStr, OpType opType) {
         if ( queryStr != null && queryStr.length() > 0) {
             ObjectQueryVisitorImpl visitor =  new ObjectQueryVisitorImpl(queryStr) ;
             for ( KeyValue each : list) {
                 try {
                     if ( each.getValue() == null || each.getValue().getData() == null  )
                         continue;
-                    Object source = serializer.toObject((byte[]) each.getValue().getData());
+                    Object source = store.getSerializer().toObject((byte[]) each.getValue().getData());
                     visitor.runQuery(source);
                     if (visitor.getSelectObj() != null) {
-                        each.getValue().setData(serializer.toBytes(visitor.getSource()));
+                        each.getValue().setData(store.getSerializer().toBytes(visitor.getSource()));
                     }
                 } catch (Exception ex) {
                     logger.error( ex.getMessage() +" key "+each.getKey().toString(), ex);
@@ -645,10 +669,10 @@ public class StoreCallBack implements TCPCallBack {
                 try {
                     Value v = store.get( keyValue.getKey());
                     if ( v != null ) {
-                        Object source = serializer.toObject((byte[]) v.getData());
+                        Object source = store.getSerializer().toObject((byte[]) v.getData());
                         Object result = visitor.runQuery( source);
                         if ( result != null) {
-                            v.setData(serializer.toBytes(visitor.getSource() ));
+                            v.setData(store.getSerializer().toBytes(visitor.getSource() ));
                             list.add(new KeyValue(keyValue.getKey(), v));
                         }
                     }
@@ -666,9 +690,9 @@ public class StoreCallBack implements TCPCallBack {
                 try {
                     Value v = store.get( keyValue.getKey());
                     if ( v != null ) {
-                        Object source = serializer.toObject((byte[]) v.getData());
+                        Object source = store.getSerializer().toObject((byte[]) v.getData());
                         visitor.runQuery( source);
-                        v.setData(serializer.toBytes(visitor.getSource()));
+                        v.setData(store.getSerializer().toBytes(visitor.getSource()));
                         v.setVersion( v.getVersion()+1);
                         store.put( keyValue.getKey(), v);
                         list.add( new KeyValue( keyValue.getKey(), null));

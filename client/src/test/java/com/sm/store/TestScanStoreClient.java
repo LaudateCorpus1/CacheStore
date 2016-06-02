@@ -1,28 +1,24 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
-package com.sm.store;
+ */package com.sm.store;
 
 import com.sm.localstore.impl.HessianSerializer;
 import com.sm.message.Invoker;
 import com.sm.storage.Serializer;
-import com.sm.store.CursorPara;
 import com.sm.store.client.RemoteValue;
 import com.sm.store.client.grizzly.GZScanClientImpl;
 import com.sm.store.client.netty.ScanClientImpl;
@@ -38,8 +34,6 @@ import java.util.List;
 
 import static com.sm.transport.Utils.getOpts;
 import static org.testng.Assert.assertEquals;
-
-
 
 public class TestScanStoreClient {
     private static final Log logger = LogFactory.getLog(TestScanStoreClient.class);

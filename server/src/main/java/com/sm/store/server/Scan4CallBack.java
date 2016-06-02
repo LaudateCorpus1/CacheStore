@@ -1,23 +1,20 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
-package com.sm.store.server;
+ */package com.sm.store.server;
 
 import com.sm.Service;
 import com.sm.message.Invoker;
@@ -25,8 +22,6 @@ import com.sm.message.Request;
 import com.sm.message.Response;
 import com.sm.query.QueryListenerImpl;
 import com.sm.store.*;
-import com.sm.store.server.RemoteScanStore;
-import com.sm.store.server.RemoteStore;
 import com.sm.utils.TupleThree;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,8 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.sm.store.StoreParas.NO_ERROR;
-
-
 
 
 public class Scan4CallBack extends StoreCallBack {
@@ -72,11 +65,11 @@ public class Scan4CallBack extends StoreCallBack {
             try {
                 RemoteStore store;
                 if ( each.isSorted() ) {
-                    store = new RemoteScanStore(each.getStore(), serializer, each.getDataPath(),
+                    store = new RemoteScanStore(each.getStore(), each.getSerializer(), each.getDataPath(),
                             each.isDelay(), null, each.getMode(), each.isSorted() );
                 }
                 else {
-                    store = new RemoteStore(each.getStore(), serializer, each.getDataPath(),
+                    store = new RemoteStore(each.getStore(), each.getSerializer(), each.getDataPath(),
                             delay, null, each.getMode()) ;
                 }
                 logger.info("put " +each.getStore()+ " path "+ each.getDataPath() );
@@ -156,7 +149,7 @@ public class Scan4CallBack extends StoreCallBack {
             }
             else {
                 list = store.multiPuts(keyValueParas.getList());
-                return new Response( processQueryStr( list, keyValueParas.getQueryStr(), keyValueParas.getOpType()) );
+                return new Response( processQueryStr( store, list, keyValueParas.getQueryStr(), keyValueParas.getOpType()) );
             }
         }
         else if (msg instanceof KeyParas) {
@@ -170,7 +163,7 @@ public class Scan4CallBack extends StoreCallBack {
             else {
                 list = store.multiGets(keyParas.getList());
                 if ( keyParas.getOpType() == OpType.MultiSelectQuery)
-                    kVParas = processQueryStr( list, keyParas.getQueryStr(), keyParas.getOpType());
+                    kVParas = processQueryStr( store, list, keyParas.getQueryStr(), keyParas.getOpType());
                 else
                     kVParas = new KeyValueParas(keyParas.getOpType(), list);
             }
@@ -188,7 +181,7 @@ public class Scan4CallBack extends StoreCallBack {
                 to = from;
             }
             List<KeyValue> list = ((RemoteScanStore) store).scan(from, to);
-            KeyValueParas keyValueParas = processQueryStr(list, scanParaList.getQueryStr(), scanParaList.getOpType());
+            KeyValueParas keyValueParas = processQueryStr(store, list, scanParaList.getQueryStr(), scanParaList.getOpType());
             response = new Response(keyValueParas );
         }
         else if (msg instanceof CursorPara) {
@@ -200,7 +193,7 @@ public class Scan4CallBack extends StoreCallBack {
             else {
                 ((RemoteScanStore) store).nextCursor(cursorPara);
                 //apply the query string if defined
-                List<KeyValue> lst = processQueryStr(cursorPara.getKeyValueList(), cursorPara.getQueryStr()).getList();
+                List<KeyValue> lst = processQueryStr(store, cursorPara.getKeyValueList(), cursorPara.getQueryStr()).getList();
                 cursorPara.setKeyValueList(lst);
             }
             response = new Response( cursorPara);

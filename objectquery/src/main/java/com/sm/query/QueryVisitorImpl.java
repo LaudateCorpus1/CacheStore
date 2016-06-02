@@ -1,22 +1,3 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package com.sm.query;
 
 import com.sm.query.parser.QueryBaseVisitor;
@@ -29,6 +10,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import voldemort.store.cachestore.Key;
@@ -39,6 +21,9 @@ import java.util.*;
 
 import static com.sm.query.utils.QueryUtils.*;
 
+/**
+ * Created by mhsieh on 6/25/15.
+ */
 public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
     private static final Log logger = LogFactory.getLog(PredicateVisitorImpl.class);
 
@@ -52,9 +37,14 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
     private ParserRuleContext tree;
     //private boolean keyPredicate =false;
     private Key key;
-    public static String KEY_FIELD = "key#";
-    public static String ALL = "*";
+    public final static String KEY_FIELD = "key#";
+    public final static String ALL = "*";
     private StatementType statementType = StatementType.None ;
+    //default value
+    private int limitRec = -1;
+    public final static String AND = "and";
+    public final static String OR = "or";
+
 
     public QueryVisitorImpl(String queryStr, Object source) {
         this.queryStr = queryStr;
@@ -74,6 +64,7 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
             QueryParser parser = new QueryParser(token);
             parser.setBuildParseTree(true);
             tree = parser.script();
+            setupLimitRec();
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             throw new QueryException( ex.getMessage(), ex );
@@ -98,6 +89,10 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
 
     public Object getSource() {
         return source;
+    }
+
+    public int getLimitRec() {
+        return limitRec;
     }
 
     public Key getKey() {
@@ -142,6 +137,23 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
                 return visit(ctx.updateStatement());
             }
         }
+    }
+
+    private void setupLimitRec() {
+        QueryParser.SelectStatementContext selectStatementContext = ((QueryParser.ScriptContext) tree).selectStatement();
+         if (selectStatementContext != null) {
+             int w = selectStatementContext.getChildCount();
+             if ( selectStatementContext.getChild( w-1 ) instanceof QueryParser.LimitPhraseContext ) {
+                 //QueryParser.WhereStatementContext whereStatementContext = (QueryParser.WhereStatementContext) selectStatementContext.getChild( w-1 );
+                 //int l = whereStatementContext.getChildCount();
+                 //if ( QueryParser.LimitPhraseContext.getChild( -1) instanceof  QueryParser.LimitPhraseContext) {
+                 QueryParser.LimitPhraseContext limitPhraseContext = (QueryParser.LimitPhraseContext) selectStatementContext.getChild( w-1 );
+                 if (limitPhraseContext.getChildCount() > 1) {
+                     limitRec = Integer.valueOf(limitPhraseContext.getChild(1).getText()) -1 ;
+                 }
+                 //}
+             }
+         }
     }
 
     @Override
@@ -193,12 +205,16 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
                 throw new QueryException(e.getMessage(), e);
             }
         }
-        Result result = visit(ctx.value());
+        Result result = visit(ctx.expression());
         try {
             if ( pop ) {
                 selectObj = idStack.pop();
+                pair.getSecond().getField().set( selectObj, convert(type, result) );
             }
-            pair.getSecond().getField().set( selectObj, convert(type, result) );
+            else {
+                pair.getSecond().getField().set( pair.getFirst(), convert(type, result) );
+            }
+
         } catch (IllegalAccessException e) {
             throw new QueryException(e.getMessage(), e);
         }
@@ -252,14 +268,12 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
     }
 
 
-
     private boolean checkWhereStatement(@NotNull QueryParser.WhereStatementContext ctx) {
         if ( ctx != null && ctx.getChildCount() > 1) {
-            int pos = ctx.getChildCount() -1 ;
-            //the last child is predicate
-            Result result = visit( ctx.getChild(pos));
+            //visit predicate
+            Result result = visit(ctx.predicate());
             //check if not in front predicate
-            if ( pos > 2 )
+            if ( ctx.getChild(1) instanceof TerminalNodeImpl )
                 return ! (Boolean) result.getValue() ;
             else
                 return (Boolean) result.getValue() ;
@@ -334,6 +348,11 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
         return 0;
     }
 
+    @Override public Result visitStrToBytesFuncExpr(QueryParser.StrToBytesFuncExprContext ctx) {
+        String str = ctx.STRING().getText().substring(1, ctx.STRING().getText().length() - 1);
+        return new Result( str.getBytes());
+    }
+
     @Override
     public Result visitObjectEmpty(@NotNull QueryParser.ObjectEmptyContext ctx) {
         return new Result(selectObj);
@@ -399,16 +418,25 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
 
 
 
+//    @Override
+//    public Result visitObjPredicate(@NotNull QueryParser.ObjPredicateContext ctx) {
+//        if (ctx.getChildCount() == 1) {
+//            return visit(ctx.objectPredicate());
+//        } else { //with not
+//            return new Result(!(Boolean) visit(ctx.objectPredicate()).getValue());
+//        }
+//    }
+
+
+
     @Override
-    public Result visitObjPredicate(@NotNull QueryParser.ObjPredicateContext ctx) {
+    public Result visitNotPredicate(@NotNull QueryParser.NotPredicateContext ctx) {
         if (ctx.getChildCount() == 1) {
-            return visit(ctx.objectPredicate());
-        } else {
-            return new Result(!(Boolean) visit(ctx.objectPredicate()).getValue());
+            return visit(ctx.predicate());
+        } else {  //with not
+            return new Result(!(Boolean) visit(ctx.predicate()).getValue());
         }
     }
-
-
     @Override
     public Result visitInComp(@NotNull QueryParser.InCompContext ctx) {
         //Result objectId = visit( ctx.objectField());
@@ -477,13 +505,13 @@ public class QueryVisitorImpl extends QueryBaseVisitor<Result> {
         else {
             Result left = visit(ctx.predicate(0));
             // implement short cut to skip right side for left is false and AND return false
-            if (ctx.logicalOperator().getText().equals("and") && ! (Boolean) left.getValue() )
+            if (ctx.logicalOperator().getText().equals(AND) && ! (Boolean) left.getValue() )
                 return left;
-            else if (ctx.logicalOperator().getText().equals("or") && (Boolean) left.getValue() )
+            else if (ctx.logicalOperator().getText().equals(OR) && (Boolean) left.getValue() )
                 return left;
             //no short cut case, run through full evaluation
             Result right = visit(ctx.predicate(1));
-            if (ctx.logicalOperator().getText().equals("and")) {
+            if (ctx.logicalOperator().getText().equals(AND)) {
                 return new Result((Boolean) left.getValue() && (Boolean) right.getValue());
             } else {
                 return new Result((Boolean) left.getValue() || (Boolean) right.getValue());

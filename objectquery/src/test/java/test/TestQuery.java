@@ -1,31 +1,18 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package test;
 
 import com.sm.query.QueryListenerImpl;
 import com.sm.query.QueryVisitorImpl;
+import com.sm.query.Result;
 import com.sm.query.impl.Condition;
+import com.sm.query.impl.Terminal;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.security.MessageDigest;
 
+/**
+ * Created by mhsieh on 6/26/15.
+ */
 public class TestQuery {
 
     @Test(groups = "{Select}")
@@ -47,10 +34,11 @@ public class TestQuery {
     public void testReplace() {
         Person.Address address = new Person.Address(new Person.Street(4813, "corsica dr"), 90630, "cypress");
         Person person = new Person("mickey", 30, 4000.00, true, null);
-        String queryStr = "replace Person set name=\"Test\", age = 20, male = false, address = { zip = 91100, city = \"irvine\" }  ";
+        String queryStr = "replace Person set name= upper(name), age = 20, male = false, address = { zip = 91100, city = \"irvine\" }  ";
         QueryVisitorImpl objectQueryVisitor = new QueryVisitorImpl(queryStr, person);
         Object obj = objectQueryVisitor.runQuery(person);
         System.out.println(objectQueryVisitor.getSource());
+        Assert.assertEquals(person.age, 20);
         queryStr = "replace address set zip = 92200, city = \"long beach\"  ";
         objectQueryVisitor = new QueryVisitorImpl(queryStr, person);
         obj = objectQueryVisitor.runQuery(person);
@@ -71,7 +59,7 @@ public class TestQuery {
 //    public void testData(){
 //        RemoteStore remoteScanStore = new RemoteStore("/Users/mhsieh/java/dev/cachestore/server/data/store", new HessianSerializer(), 0);
 //        HessianSerializer serializer = new HessianSerializer();
-//        String queryStr = "select  name, age, male from Person where key# in (11,12,13,14) or (key# = 10 +20 and age = 120) or (key# >= 40 and key# <= 80)";
+//        String queryStr = "select  name, age, male from Person where key# ek (11,12,13,14) or (key# = 10 +20 and age = 120) or (key# >= 40 and key# <= 80)";
 //        queryStr = "select  name, age, male from Person where key# >= 2 and key# <= 10" ;
 //        QueryListenerImpl queryListener = new QueryListenerImpl( queryStr);
 //        queryListener.walkTree();
@@ -89,9 +77,9 @@ public class TestQuery {
 //        }
 //    }
 
-    @Test(groups = "{walk}")
+    //@Test(groups = "{walk}")
     public void walkTree() {
-        //queryStr = "select  name, age, male from Person where (key# in (10,14) or key# = 120) or ( key# >= 20 and key# <= 100)  or (age = 30 and key# = 80+20)";
+        //queryStr = "select  name, age, male from Person where (key# ek (10,14) or key# = 120) or ( key# >= 20 and key# <= 100)  or (age = 30 and key# = 80+20)";
         String queryStr = "select  name, age, male from Person where male = true and age < 10" ;
         QueryListenerImpl queryListener = new QueryListenerImpl( queryStr);
         queryListener.walkTree();
@@ -106,8 +94,9 @@ public class TestQuery {
         }
     }
 
-    @Test(groups = "{walk}")
+    //@Test(groups = "{walk}")
     public void testWalk() {
+        Terminal t1 = new Terminal("general", Result.Type.STRING);
         String queryStr = "select  name, age, male from Person where key# in (11,12,13,14) or (key# = 10 +20 and age = 120) or (key# >= 40 and key# <= 80)";
         QueryVisitorImpl visitor = new QueryVisitorImpl( queryStr);
         visitor.runKeyPredicate();
@@ -139,7 +128,7 @@ public class TestQuery {
     case operator or
     visit left
     visit right
-    in get operator
+    ek get operator
     A predicate Iterator,
     The constructor pass (Store, Predicate)
     next() return KeyValue pair

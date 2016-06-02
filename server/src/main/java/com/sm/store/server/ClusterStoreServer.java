@@ -1,19 +1,18 @@
 /*
  *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
  */
 
@@ -78,7 +77,7 @@ public class ClusterStoreServer implements Service {
         storeMaps = new ConcurrentHashMap<String, RemoteStore>();
         for (StoreConfig each : serverConfig.getStoreConfigList()) {
             logger.info("start store "+each.toString());
-            ClusterStore store = new ClusterStore(each.getFileName(), buildSerializer(each.getSerializer()), findPath(each.getDataPath()), each.isDelay(), each.getBlockSize(), each.getMode(), each.isSorted(),
+            ClusterStore store = new ClusterStore(each.getFileName(), each.getSerializer(), findPath(each.getDataPath()), each.isDelay(), each.getBlockSize(), each.getMode(), each.isSorted(),
                     serverConfig.findClusterNodes(clusterNo));
             if ( each.isDelay()) {
                 logger.info("writeThread "+each.getDelayThread());
@@ -157,18 +156,18 @@ public class ClusterStoreServer implements Service {
     }
 
     public ClusterStore getStore(String store) {
-        return (ClusterStore) storeMaps.get(store);
+         return (ClusterStore) storeMaps.get(store);
     }
 
     public void hookShutdown() {
         Runtime.getRuntime().addShutdownHook( new Thread( new Shutdown()));
     }
 
-    public List<String> getAllStoreNames() {
-        Set<String> sets = storeMaps.keySet();
-        ArrayList<String> list = new ArrayList<String>( sets);
-        return list;
-    }
+     public List<String> getAllStoreNames() {
+         Set<String> sets = storeMaps.keySet();
+         ArrayList<String> list = new ArrayList<String>( sets);
+         return list;
+     }
 
     protected Map<String, CacheStore> buildMap(Map<String, RemoteStore> storeMap) {
         Map<String, CacheStore> cacheMap = new ConcurrentHashMap<String, CacheStore>();
@@ -193,10 +192,10 @@ public class ClusterStoreServer implements Service {
 
         logger.warn("Server enter shutdown serverState unbind acceptor " );
         if (server != null ) server.getChannel().unbind() ;
-        if (replicaServer != null){
-            logger.warn("shut down replica server "+replicaServer.toString() );
-            replicaServer.shutdown();
-        }
+         if (replicaServer != null){
+             logger.warn("shut down replica server "+replicaServer.toString() );
+             replicaServer.shutdown();
+         }
         Iterator<Map.Entry<String, RemoteStore>> iterator = storeMaps.entrySet().iterator();
         while (iterator.hasNext() ) {
             Map.Entry<String, RemoteStore> it = iterator.next();

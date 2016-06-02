@@ -1,28 +1,24 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+ */package com.sm.store.server;
 
-package com.sm.store.server;
 import com.sm.query.Predicate;
 import com.sm.query.Result;
 import com.sm.query.utils.QueryException;
-import com.sm.store.server.RemoteScanStore;
-import com.sm.store.server.RemoteStore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import voldemort.store.cachestore.Key;
@@ -36,8 +32,6 @@ import java.util.Stack;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 import static com.sm.query.Predicate.Operator.GreaterEQ;
-
-
 
 public class QueryIterator implements Iterator {
     private static final Log logger = LogFactory.getLog(QueryIterator.class);
@@ -228,10 +222,13 @@ public class QueryIterator implements Iterator {
             case LONG:
             case LONGS:
                 return Key.createKey( Long.valueOf( each));
+            case ARRAY:
+                return Key.createKey(each.getBytes());
             default:
                 throw new QueryException("create Key wrong keyType "+type);
         }
     }
+
 
     private Iterator<Key> buildRangeIteration(Predicate left, Predicate right) {
         if ( ! sorted ) {

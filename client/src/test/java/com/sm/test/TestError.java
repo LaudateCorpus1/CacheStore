@@ -1,23 +1,20 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
-package com.sm.test;
+ */package com.sm.test;
 
 import com.sm.localstore.impl.HessianSerializer;
 import com.sm.storage.Serializer;
@@ -25,15 +22,45 @@ import com.sm.store.client.ClusterClient;
 import com.sm.store.client.ClusterClientFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.testng.annotations.Test;
 import voldemort.store.cachestore.Key;
 import voldemort.store.cachestore.Value;
+
+import java.io.FileReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.sm.transport.Utils.getOpts;
 
 public class TestError {
+
+
     private static final Log logger = LogFactory.getLog(TestError.class);
     ClusterClient client;
     Serializer serializer;
+
+    //@Test
+    public static void testSplit() {
+        ArrayList<String> list = new ArrayList<String>(Arrays.asList( "1","2","3","4","5") );
+        ArrayList<String> alist = new ArrayList<String>(Arrays.asList( "1","2","3" ));
+        int j = list.size();
+
+        list.removeAll(alist);
+        System.out.println(list.toString()+ " alist "+alist);
+//        for ( int i =0 ; i < j ; i++) {
+//            //list.remove( each);
+//            System.out.println("list "+ list.get(i) +" " +list.toString());
+//            list.remove(i);
+//        }
+        String strToBytes = "strToBytes(\"00005d29e7918b7c9460a4c8496b8640\")";
+        String[] splits = strToBytes.split("\"");
+        System.out.println(splits[1].getBytes());
+    }
+
 
     public TestError(ClusterClient client) {
         this.client = client;

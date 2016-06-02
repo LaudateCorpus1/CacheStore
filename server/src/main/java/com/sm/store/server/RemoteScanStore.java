@@ -1,19 +1,18 @@
 /*
  *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
  */
 
@@ -285,8 +284,8 @@ public class RemoteScanStore extends RemoteStore implements ScanPersistence {
     private boolean skipKey(Key key, Key from, Key to, CursorPara.CursorType type) {
         if ( type != CursorPara.CursorType.Scan  ) return false;
         else
-            return  ((Comparable) from.getKey()).compareTo( (Comparable) key.getKey() ) > 0 ||
-                ((Comparable) to.getKey()).compareTo( (Comparable) key.getKey() ) < 0  ;
+            return  ((Comparable) from).compareTo( (Comparable) key ) > 0 ||
+                ((Comparable) to).compareTo( (Comparable) key ) < 0  ;
     }
 
     public class CleanUpCursor {

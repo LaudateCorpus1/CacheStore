@@ -1,31 +1,10 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sm.query.ObjectQueryVisitorImpl;
-import com.sm.query.PredicateEstimator;
-import com.sm.query.PredicateVisitorImpl;
-import com.sm.query.Result;
+import com.sm.query.*;
 import com.sm.query.utils.ClassInfo;
+import com.sm.query.utils.Column;
 import com.sm.test.DataMap;
 import com.sm.transport.Utils;
 import org.testng.Assert;
@@ -38,21 +17,82 @@ import static com.sm.query.utils.QueryUtils.findClassInfo;
 import static test.Person.Address;
 import static test.Person.Street;
 
+/**
+ * Created by mhsieh on 12/30/14.
+ */
 public class TestPredImpl {
+
+    public static Map<String, Column> buildMap() {
+        Map<String, Column> map = new HashMap<String, Column>();
+        map.put("carMake", new Column("carMake", Result.Type.BYTE, 0));
+        map.put("carClass", new Column("carClass", Result.Type.BYTE, 1));
+        map.put("carAge", new Column("carAge", Result.Type.BYTE, 2));
+        map.put("carInsurance", new Column("carInsurance", Result.Type.BYTE, 3));
+        map.put("demoHomeOwner", new Column("demoHomeOwner", Result.Type.BYTE, 4));
+        return map;
+    }
+
+    @Test(enabled = false)
+    public void orderOfOperations() {
+        TestTrue testTrue = new TestTrue();
+        String queryStr = "t = true or t = true and t = false";
+        PredicateVisitorImpl visitor = new PredicateVisitorImpl(queryStr);
+        boolean b = visitor.runPredicate(testTrue);
+        //Assert.assertEquals(b, true || true && false);
+    }
+
+    public static class TestTrue {
+        boolean t = true;
+    }
+
+    @Test
+    public void testSchema(){
+        Test1 test1 = new Test1();
+        test1.bytes = "test".getBytes();
+        test1.c = "test";
+        String queryStr = "select  * from Test1 where c != null and c = \"test\" ";
+        QueryVisitorImpl objectQueryVisitor = new QueryVisitorImpl(queryStr);
+        Object obj = objectQueryVisitor.runQuery(test1);
+        System.out.println( obj ==null ? "null" : obj.toString());
+        String queryStr1 = "select  * from Test1 where key# != strToBytes(\"test\") and country !=  lower(country) ";
+        QueryListenerImpl queryListener = new QueryListenerImpl( queryStr1);
+        queryListener.walkTree();
+        System.out.println(queryListener.getPredicateStack().toString() + " exit result " + queryListener.isTableScan());
+
+//        queryListener = new QueryListenerImpl( queryStr);
+//        queryListener.walkTree();
+//        System.out.println(queryListener.getPredicateStack().toString() + " exit result " + queryListener.isTableScan());
+//        QueryVisitorImpl objectQueryVisitor = new QueryVisitorImpl(queryStr);
+//        Object obj = objectQueryVisitor.runQuery(test1);
+//        System.out.println("test "+obj.toString());
+//        byte[] bytes = new byte[]{ 0x04,0x05,0x06,0x07,0x08 };
+//        Filter filter = new SchemaPredicateVisitorImpl("carMake =4 and carClass = 5", buildMap());
+//        boolean bl =filter.runPredicate(bytes);
+//        Assert.assertTrue( bl);
+//        filter = new SchemaPredicateVisitorImpl("carMake =5 and carClass = 5", buildMap());
+//        bl =filter.runPredicate(bytes);
+//        Assert.assertFalse(bl);
+//        //System.out.println("bl "+bl);
+//        filter = new SchemaPredicateVisitorImpl("carMake =6 or carClass = 10", buildMap());
+//        bl =filter.runPredicate(bytes);
+//        //System.out.println("bl "+bl);
+//        Assert.assertFalse(bl);
+
+    }
+
 
     @Test(groups ="{Select}")
     public void testSelect(){
-        Address address = new Address( new Street(4813, "corsica dr"), 90630, "cypress");
+        Person.Address address = new Person.Address(new Person.Street(4813, "corsica dr"), 90630, "cypress");
         Person person = new Person("mickey", 30, 4000.00, true, address);
-        String queryStr = "select  name, age, male from Person where age > 10";
-        ObjectQueryVisitorImpl objectQueryVisitor = new ObjectQueryVisitorImpl( queryStr);
-        Object obj =objectQueryVisitor.runQuery(person);
-        System.out.println( obj.toString());
-        queryStr = "select  address.Street.no, name, age, male, address.city, address.zip from Person where age > 10";
-        objectQueryVisitor.setQueryStr( queryStr);
-        obj =objectQueryVisitor.runQuery(person);
-        System.out.println( obj.toString());
-
+        String queryStr = "select  name, age, male from Person where not age > 40";
+        QueryVisitorImpl objectQueryVisitor = new QueryVisitorImpl(queryStr);
+        Object obj = objectQueryVisitor.runQuery(person);
+        System.out.println(obj == null ? "null" : obj.toString());
+        queryStr = "select  address.Street.no, name, age, male, address.city, address.zip from Person where age < 40 ";
+        objectQueryVisitor.setQueryStr(queryStr);
+        obj = objectQueryVisitor.runQuery(person);
+        System.out.println(obj == null ? "null" : obj.toString());
     }
 
     @Test(groups = "{replace} ")
@@ -96,23 +136,23 @@ public class TestPredImpl {
         person.setAddressList(lstAd);
 
         String queryStr1 = " existListOr(addressList, lst, ( \"t1\", \"t2\" ) ) ";;
-        PredicateVisitorImpl predicateVisitor1 = new PredicateVisitorImpl(queryStr1, person);
+        PredicateVisitorImpl predicateVisitor1 = new PredicateVisitorImpl(queryStr1);
         boolean r1 = predicateVisitor1.runPredicate(person);
         System.out.println( "r1 ="+r1);
         Assert.assertEquals( r1, true);
         String queryStr2 = " exist(addressList, lst, \"t5\" )";
-        PredicateVisitorImpl predicateVisitor2 = new PredicateVisitorImpl(queryStr2, person);
+        PredicateVisitorImpl predicateVisitor2 = new PredicateVisitorImpl(queryStr2);
         boolean r2 = predicateVisitor2.runPredicate(person);
         System.out.println( "r2 ="+r2);
         Assert.assertEquals( r2, false);
         queryStr1 = " existListOr(list, ( \"t1\", \"t2\" ) ) ";
-        predicateVisitor2 = new PredicateVisitorImpl(queryStr1, person);
+        predicateVisitor2 = new PredicateVisitorImpl(queryStr1);
         r2 = predicateVisitor2.runPredicate(person);
         System.out.println( "t1, t2 r2 ="+r2);
         //Person p1 = person.getClass().newInstance();
         String queryStr = " exist(list, \"t3\" )";
-        //queryStr = " age in (30, 40,50) ";
-        PredicateVisitorImpl predicateVisitor = new PredicateVisitorImpl(queryStr, person);
+        //queryStr = " age ek (30, 40,50) ";
+        PredicateVisitorImpl predicateVisitor = new PredicateVisitorImpl(queryStr);
         boolean result = predicateVisitor.runPredicate(person);
         System.out.println("result "+result);
         Assert.assertEquals(result, false);
@@ -142,6 +182,27 @@ public class TestPredImpl {
         Assert.assertEquals( result, true);
     }
 
+    @Test
+    public void testMultiPredicate() {
+        Person person = new Person("mickey", 30, 4000.00, true, null);
+        Te te = new Te("test", 40, true);
+        String queryStr1 = "Person.age > 10 and Te.ek > 5";
+        queryStr1 = "Person.age > 10 and Te.ek > 30";
+        PredicateVisitorImpl predicateVisitor1 = new PredicateVisitorImpl(queryStr1);
+        boolean bl = predicateVisitor1.runPredicate(person, null);
+        System.out.println( bl);
+    }
+
+    @Test void testMultiAlias() {
+        String queryStr1 = "Person.age > 10 and Te.ek > 5";
+        queryStr1 = "Person.age > 10 and Te.ek > 30 or Person.income < 300.00 and Te.bl = true";
+        PredicateAlias predicateVisitor1 = new PredicateAlias(queryStr1);
+        System.out.println(predicateVisitor1.findAlias(Filter.Impl.Serializer).toString());
+        queryStr1 = "A.age > 10 and B.ek > 30";
+        predicateVisitor1 = new PredicateAlias(queryStr1);
+        System.out.println(predicateVisitor1.findAlias(Filter.Impl.Schema).toString());
+    }
+
     @Test(groups = "{predicate}" )
     public void testOne() {
         PredicateEstimator.Source source = PredicateEstimator.Source.CRM;
@@ -149,15 +210,20 @@ public class TestPredImpl {
         DataMap map = new DataMap();
         map.populateMap();
         PredicateEstimator predicateEstimator = new PredicateEstimator(map);
-        double rate = predicateEstimator.runEstimate(" foods = 1 or other = 2 ");
-        //double rate = predicateEstimator.runEstimate(" (((gender = \"male\" or foods = \"1.1\")))");
-        //double rate = predicateEstimator.runEstimate("( foods = 1 and other = 2) and gender = \"male\" and not age = \"25-34\" ");
+        //double rate = predicateEstimator.runEstimate(" foods = 1 or other = 2 ");
+        //double rate = predicateEstimator.runEstimate(" (((uk.gender = \"male\" or age = \"25-34\")))");
+        double rate = predicateEstimator.runEstimate("( (us.age = \"18-24\") and (exp = \"1.1\") ) ");
         // foods.1.1
-        //String sce = predicateEstimator.getSourceStack().pop().getValue() ;
-        double ncs = predicateEstimator.getPopulation();
+        //String sce = predicateEstimator.getSourceStack().peek().getValue() ;
+        double ncs = predicateEstimator.getPopulation("uk");
         double value = Math.abs(Math.round(ncs*rate));
         System.out.println("result of dr "+ rate +" total "+ value+ " ncs "+ncs );
         //predicateEstimator
+        rate = predicateEstimator.runEstimate("( (ms = \"1.1\") and (uk.age = \"18-24\") ) ");
+        //ncs  = predicateEstimator.getPopulation(sce);
+        ncs = predicateEstimator.getPopulation("ms");
+        value = Math.abs(Math.round(ncs*rate));
+        System.out.println("result of dr "+ rate +" total "+ value+ " ncs "+ncs );
         Address address = new Address( new Street(4813, "corsica dr"), 90630, "cypress");
         Set<Short> setShort = new HashSet<Short>();
         setShort.add( (short) 1); setShort.add( (short) 2);setShort.add( (short) 3);
@@ -186,6 +252,16 @@ public class TestPredImpl {
         private int a;
         private long b = -1;
         private String c ;
+        private byte[] bytes;
+
+        @Override
+        public String toString() {
+            return "Test1{" +
+                    "a=" + a +
+                    ", b=" + b +
+                    ", bytes=" + Arrays.toString(bytes) +
+                    '}';
+        }
     }
 
 

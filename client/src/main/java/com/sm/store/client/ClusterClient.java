@@ -1,19 +1,18 @@
 /*
  *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
  */
 
@@ -49,7 +48,7 @@ import static com.sm.store.Utils.createCacheValue;
 import static com.sm.store.Utils.createRemoteValue;
 
 @JmxManaged(description = "ClusterClient")
-public class ClusterClient implements StorePersistence {
+public class ClusterClient implements ScanPersistence {
     private static final Log logger = LogFactory.getLog(ClusterClient.class);
 
     protected Serializer serializer ;
@@ -126,65 +125,12 @@ public class ClusterClient implements StorePersistence {
         CacheValue v = createCacheValue(value, serializer);
         StoreParas paras = new StoreParas(OpType.Insert, key, v);
         runRequest( paras);
-        //byte[] payload = paras.toBytes();
-//        byte[] payload = embeddedSerializer.toBytes(paras);
-//        Request request = clientConnections.createRequest( payload, store);
-//        Client tcpClient = null ;
-//        try {
-//            tcpClient = clientConnections.getConnection( key);
-//            Response response = tcpClient.sendRequest(request);
-//            if ( response.getPayload() instanceof StoreParas ) {
-//                //check error code handle exception
-//                StoreParas storeParas = ((StoreParas) response.getPayload());
-//                if ( storeParas.getErrorCode() == StoreParas.OBSOLETE) {
-//                    throw new ObsoleteVersionException("key "+key.getKey().toString());
-//                }
-//                else if ( storeParas.getErrorCode() == StoreParas.STORE_EXCEPTION ) {
-//                    throw new StoreException("key "+key.getKey().toString()) ;
-//                }
-//            }
-//            else {
-//                logger.warn("expect StoreParas but get "+response.getPayload().getClass().getName()+" "+
-//                        response.getPayload().toString());
-//                throw new StoreException(response.getPayload().toString());
-//            }
-//        } catch (Exception ex) {
-//            throw new RuntimeException( ex.getMessage(), ex );
-//        } finally {
-//            closeNio( tcpClient);
-//        }
     }
 
     @JmxOperation(description = "put")
     @Override
     public void put(Key key, Value value) {
         updateQuery(key, value, null);
-//        CacheValue v = createCacheValue(value, serializer);
-//        StoreParas paras = new StoreParas(OpType.Put, key, v);
-//        //byte[] payload = paras.toBytes();
-//        byte[] payload = embeddedSerializer.toBytes(paras);
-//        Request request = clientConnections.createRequest( payload, store);
-//        Client tcpClient = null ;
-//        try {
-//            tcpClient = clientConnections.getConnection( key);
-//            Response response = tcpClient.sendRequest(request);
-//            if ( response.getPayload() instanceof StoreParas ) {
-//                //check error code handle exception
-//                StoreParas storeParas = ((StoreParas) response.getPayload());
-//                if ( storeParas.getErrorCode() == StoreParas.OBSOLETE) {
-//                    throw new ObsoleteVersionException("key "+key.getKey().toString());
-//                }
-//                else if ( storeParas.getErrorCode() == StoreParas.STORE_EXCEPTION ) {
-//                    throw new StoreException("key "+key.getKey().toString()) ;
-//                }
-//            }
-//            else  {
-//                throw new StoreException("expect StoreParas but get "+response.getPayload().getClass().getName()+" "+
-//                        response.getPayload().toString());
-//            }
-//        } finally {
-//            closeNio( tcpClient);
-//        }
     }
 
     private void closeNio(Client tcpClient) {
@@ -392,7 +338,7 @@ public class ClusterClient implements StorePersistence {
         return executeRequest( keyClusterList, opType, queryStr, keys);
     }
 
-
+    @Override
     public List<KeyValue> multiGets(List<Key> keys) {
         return multiGets( keys, null);
     }
@@ -402,9 +348,14 @@ public class ClusterClient implements StorePersistence {
         OpType opType = ( queryStr == null ? OpType.MultiPuts : OpType.MultiUpdateQuery);
         return executeRequest( keyClusterList, opType, queryStr, list);
     }
-
+    @Override
     public List<KeyValue>  multiPuts(List<KeyValue> list) {
         return multiPuts( list, null);
+    }
+
+    @Override
+    public List<KeyValue> scan(Key from) {
+        return scan(from, from);
     }
 
     public List<KeyValue> multiRemoves(List<Key> keys) {
@@ -419,7 +370,14 @@ public class ClusterClient implements StorePersistence {
         ExecutorService executor = Executors.newFixedThreadPool(size);
         List<Runnable> runnableList = new ArrayList<Runnable>(size);
         for ( int i = 0; i < size ; i++ ) {
-            Request request = create4GetPutRequest(list, opType, queryStr);
+            List paraList ;
+            if ( opType == OpType.MultiUpdateQuery || opType ==OpType.MultiPuts) {
+                paraList = findList( keyClusterList.get(i).getKeyList(), list);
+            }
+            else {
+                paraList =  keyClusterList.get(i).getKeyList();
+            }
+            Request request = create4GetPutRequest(paraList, opType, queryStr);
             RunThread runThread =  new RunThread(request, keyClusterList.get(i).getCluster(), countDownLatch,
                     keyClusterList.get(i).getKeyList().get(0), opType) ;
             runnableList.add( runThread);
@@ -625,15 +583,68 @@ public class ClusterClient implements StorePersistence {
      * @return
      */
     public List<Object> clusterStoreProc(Invoker invoker, List<Key> keys) {
-        List<KeyCluster> keyClusterList = findKeyGroups( keys);
-        if ( keyClusterList.size() == 0) throw new RuntimeException("keyCluster size = 0, keys size "+keys.size());
-        return executeStoreProc(invoker, keyClusterList, true, null);
+//        List<KeyCluster> keyClusterList = findKeyGroups( keys);
+//        if ( keyClusterList.size() == 0) throw new RuntimeException("keyCluster size = 0, keys size "+keys.size());
+        return clusterStoreProc(invoker, keys, null);
     }
 
     public List<Object> clusterStoreProc(Invoker invoker, List<Key> keys, String queryStr) {
         List<KeyCluster> keyClusterList = findKeyGroups( keys);
         if ( keyClusterList.size() == 0) throw new RuntimeException("keyCluster size = 0, keys size "+keys.size());
-        return executeStoreProc(invoker, keyClusterList, true, (queryStr == null ) ? "" : queryStr);
+        //try to rebalance the size of key for each node
+        List<KeyCluster> kcList = rebalance( keyClusterList) ;
+        return executeStoreProc(invoker, kcList, true, (queryStr == null ) ? "" : queryStr);
+    }
+
+    protected List<KeyCluster> rebalance(List<KeyCluster> list) {
+        List<KeyCluster> toReturn = new ArrayList<KeyCluster>(list.size());
+         while ( list.size() > 0) {
+             Pair<KeyCluster, KeyCluster> pair = balance(list);
+             toReturn.add( pair.getFirst());
+             if ( pair.getSecond() != null)
+                 toReturn.add( pair.getSecond());
+         }
+         return toReturn;
+    }
+
+    private Pair<KeyCluster, KeyCluster> balance(List<KeyCluster> list) {
+        if (list.size() == 0 ) return null;
+        //get the first one
+        KeyCluster first = list.get(0);
+        KeyCluster second = null;
+        list.remove( first);
+        for (KeyCluster each :list ) {
+            if (each.getCluster() == first.getCluster()) {
+                int dif = Math.abs(each.getKeyList().size() - first.getKeyList().size());
+                int max = Math.max(each.getKeyList().size() , first.getKeyList().size()) ;
+                if ( dif > 500  && (dif * 100)/max >= 30 ) {
+                    int remove = dif /2 ;
+                    logger.info("rebalance max "+max+" diff "+dif+" remove "+remove);
+                    // move half of diff
+                    List<Key> toRemove = new ArrayList<Key>(dif/2);
+                    if (each.getKeyList().size() > first.getKeyList().size()) {
+                        for (int j = 0; j < remove; j++) {
+                            Key k = each.getKeyList().get(j);
+                            toRemove.add(k);
+                        }
+                        first.getKeyList().addAll(toRemove);
+                        each.getKeyList().removeAll( toRemove);
+                    } else if (each.getKeyList().size() < first.getKeyList().size()) {
+                        for (int j = 0; j < remove; j++) {
+                            Key k = first.getKeyList().get(j);
+                            toRemove.add(k);
+                        }
+                        each.getKeyList().addAll(toRemove);
+                        first.getKeyList().removeAll( toRemove);
+                    }
+                    logger.info("rebalance "+first.toString()+" "+each.toString());
+                }
+                second = each;
+                break;
+            }
+        }
+        if ( second != null ) list.remove( second);
+        return new Pair<KeyCluster, KeyCluster>(first, second);
     }
 
     protected List<Object> executeStoreProc(Invoker invoker, List<KeyCluster> keyClusterList, boolean addKey){
@@ -940,6 +951,11 @@ public class ClusterClient implements StorePersistence {
 
         public void addKey(Key key) {
             keyList.add(key);
+        }
+
+        @Override
+        public String toString(){
+            return "cluster "+cluster+" index "+index +" size "+keyList.size();
         }
     }
 

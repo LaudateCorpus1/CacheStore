@@ -5,7 +5,7 @@ script
     ;
 
 selectStatement
-    : 'select' objectField (',' objectField)* 'from' identifier whereStatement? #SelectStats
+    : 'select' objectField (',' objectField)* 'from' identifier whereStatement? limitCause?  #SelectStats
     ;
 
 updateStatement
@@ -19,10 +19,15 @@ whereStatement
     : 'where' 'not'? predicate
     ;
 
+limitCause
+    : 'limit' NUMBER                     #LimitPhrase
+    ;
+
 predicate
 	: predicate logicalOperator predicate  #LogicPredicate
 	| LPAREN predicate RPAREN              #ParenPredicate
-	| 'not'? objectPredicate               #ObjPredicate
+	| 'not' predicate                      #NotPredicate
+	| objectPredicate                      #ObjPredicate
     ;
 
 objectPredicate
@@ -44,11 +49,12 @@ functionalExpression
     | 'count' LPAREN objectField ',' (objectField ',')? expression RPAREN #CountExpr
     | 'substr' LPAREN objectField ',' expression RPAREN #SubstrExpr
     | 'exist' LPAREN objectField ',' (objectField ',')? expression RPAREN #ExistExpr
+    | 'strToBytes' LPAREN STRING RPAREN  #StrToBytesFuncExpr
     ;
 
 assignments
     : assignments ',' assignments    #AssignStats
-    | objectField '=' value          #AssignObject
+    | objectField '=' expression     #AssignObject
     ;
 
 objectField
@@ -59,6 +65,7 @@ objectField
 
 identifier
     :  ID ;
+
 
 value
     :  object                      #Objects

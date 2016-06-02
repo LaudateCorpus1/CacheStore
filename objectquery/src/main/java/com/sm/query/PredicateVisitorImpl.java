@@ -1,22 +1,3 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package com.sm.query;
 
 import com.sm.query.parser.PredicateBaseVisitor;
@@ -35,26 +16,31 @@ import java.io.StringReader;
 import java.util.*;
 
 import static com.sm.query.utils.QueryUtils.findObjectId;
+import static com.sm.query.utils.QueryUtils.findSource;
 
-public class PredicateVisitorImpl extends PredicateBaseVisitor<Result> {
+/**
+ * Created by mhsieh on 12/30/14.
+ */
+public class PredicateVisitorImpl extends PredicateBaseVisitor<Result> implements Filter {
     private static final Log logger = LogFactory.getLog(PredicateVisitorImpl.class);
 
     private Map<String, FieldInfo> idMap = new HashMap<String, FieldInfo>();
     private Map<String, ClassInfo> classInfoMap = new HashMap<String, ClassInfo>();
     private String queryStr;
-    private Object source;
+    private Object[] source;
     private ParserRuleContext tree;
+    private List<String> classNameList = new ArrayList<String>() ;
 
     public PredicateVisitorImpl(String queryStr) {
         this.queryStr = queryStr;
         init();
     }
 
-    public PredicateVisitorImpl(String queryStr, Object source) {
-        this.queryStr = queryStr;
-        this.source = source;
-        init();
-    }
+//    public PredicateVisitorImpl(String queryStr, Object... source) {
+//        this.queryStr = queryStr;
+//        this.source = source;
+//        init();
+//    }
 
     private void init() {
         try {
@@ -70,15 +56,21 @@ public class PredicateVisitorImpl extends PredicateBaseVisitor<Result> {
         }
     }
 
-    public boolean runPredicate(Object source) {
+    public boolean runPredicate(Object... source) {
         try {
             if ( source == null || queryStr == null ||  queryStr.length() == 0) {
                 //logger.info("source is null or queryStr is empty");
                 return true;
             }
-            //assign source
+            //assign source, class name is null that represent source[i] is null
             this.source = source;
-            //ParseTreeWalker walker = new ParseTreeWalker();
+            classNameList.clear();
+            for ( Object each : source) {
+                if ( each == null)
+                    classNameList.add(null);
+                else
+                    classNameList.add( each.getClass().getSimpleName());
+            }
             Result result = visit( tree);
             return (Boolean ) result.getValue() ;
         } catch (Exception ex) {
@@ -303,15 +295,16 @@ public class PredicateVisitorImpl extends PredicateBaseVisitor<Result> {
     }
 
 
-//    @Override
-//    public Result visitBinaryOperator(@NotNull PredicateParser.BinaryOperatorContext ctx) {
-//        return null;
-//    }
 
     @Override
     public Result visitObjectField(@NotNull PredicateParser.ObjectFieldContext ctx)  {
+        //find the right object from collection
+        Pair<Object, String> sourcePair = findSource( ctx.getText(), source, classNameList);
+        //if source null that return null without traverse
+        if ( sourcePair.getFirst() == null)
+            return new Result(null);
         //first is object, second is field
-        Pair<Object, FieldInfo> pair = findObjectId(ctx.getText(), source, classInfoMap);
+        Pair<Object, FieldInfo> pair = findObjectId(sourcePair.getSecond(), sourcePair.getFirst(), classInfoMap);
         idMap.put(ctx.getText(), pair.getSecond());
         try {
             if ( pair.getFirst() == null) return new Result(null);
@@ -323,6 +316,7 @@ public class PredicateVisitorImpl extends PredicateBaseVisitor<Result> {
             throw new ObjectIdException( e.getMessage(), e);
         }
     }
+
 
     @Override
     public Result visitExpParen(@NotNull PredicateParser.ExpParenContext ctx) {
@@ -355,6 +349,5 @@ public class PredicateVisitorImpl extends PredicateBaseVisitor<Result> {
         else
             return new Result( false);
     }
-
 
 }

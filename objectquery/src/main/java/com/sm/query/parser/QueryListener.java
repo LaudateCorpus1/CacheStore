@@ -1,21 +1,4 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+// Generated from /Users/mhsieh/java/dev/query/objectquery/src/main/resources/Query.g4 by ANTLR 4.5.1
 package com.sm.query.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -81,29 +64,17 @@ public interface QueryListener extends ParseTreeListener {
 	 */
 	void exitWhereStatement(QueryParser.WhereStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code LogicPredicate}
-	 * labeled alternative in {@link QueryParser#predicate}.
+	 * Enter a parse tree produced by the {@code LimitPhrase}
+	 * labeled alternative in {@link QueryParser#limitCause}.
 	 * @param ctx the parse tree
 	 */
-	void enterLogicPredicate(QueryParser.LogicPredicateContext ctx);
+	void enterLimitPhrase(QueryParser.LimitPhraseContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code LogicPredicate}
-	 * labeled alternative in {@link QueryParser#predicate}.
+	 * Exit a parse tree produced by the {@code LimitPhrase}
+	 * labeled alternative in {@link QueryParser#limitCause}.
 	 * @param ctx the parse tree
 	 */
-	void exitLogicPredicate(QueryParser.LogicPredicateContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ParenPredicate}
-	 * labeled alternative in {@link QueryParser#predicate}.
-	 * @param ctx the parse tree
-	 */
-	void enterParenPredicate(QueryParser.ParenPredicateContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ParenPredicate}
-	 * labeled alternative in {@link QueryParser#predicate}.
-	 * @param ctx the parse tree
-	 */
-	void exitParenPredicate(QueryParser.ParenPredicateContext ctx);
+	void exitLimitPhrase(QueryParser.LimitPhraseContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ObjPredicate}
 	 * labeled alternative in {@link QueryParser#predicate}.
@@ -116,6 +87,42 @@ public interface QueryListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitObjPredicate(QueryParser.ObjPredicateContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code LogicPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void enterLogicPredicate(QueryParser.LogicPredicateContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code LogicPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void exitLogicPredicate(QueryParser.LogicPredicateContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NotPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotPredicate(QueryParser.NotPredicateContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NotPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotPredicate(QueryParser.NotPredicateContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ParenPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenPredicate(QueryParser.ParenPredicateContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ParenPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenPredicate(QueryParser.ParenPredicateContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Comparison}
 	 * labeled alternative in {@link QueryParser#objectPredicate}.
@@ -153,6 +160,30 @@ public interface QueryListener extends ParseTreeListener {
 	 */
 	void exitExpressionPredicate(QueryParser.ExpressionPredicateContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code FunctionExp}
+	 * labeled alternative in {@link QueryParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionExp(QueryParser.FunctionExpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FunctionExp}
+	 * labeled alternative in {@link QueryParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionExp(QueryParser.FunctionExpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Expr}
+	 * labeled alternative in {@link QueryParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr(QueryParser.ExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Expr}
+	 * labeled alternative in {@link QueryParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr(QueryParser.ExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ExpValues}
 	 * labeled alternative in {@link QueryParser#expression}.
 	 * @param ctx the parse tree
@@ -176,30 +207,6 @@ public interface QueryListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpParen(QueryParser.ExpParenContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Expr}
-	 * labeled alternative in {@link QueryParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpr(QueryParser.ExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Expr}
-	 * labeled alternative in {@link QueryParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpr(QueryParser.ExprContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code FunctionExp}
-	 * labeled alternative in {@link QueryParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionExp(QueryParser.FunctionExpContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code FunctionExp}
-	 * labeled alternative in {@link QueryParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionExp(QueryParser.FunctionExpContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code LowerExpr}
 	 * labeled alternative in {@link QueryParser#functionalExpression}.
@@ -261,17 +268,17 @@ public interface QueryListener extends ParseTreeListener {
 	 */
 	void exitExistExpr(QueryParser.ExistExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code AssignObject}
-	 * labeled alternative in {@link QueryParser#assignments}.
+	 * Enter a parse tree produced by the {@code StrToBytesFuncExpr}
+	 * labeled alternative in {@link QueryParser#functionalExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignObject(QueryParser.AssignObjectContext ctx);
+	void enterStrToBytesFuncExpr(QueryParser.StrToBytesFuncExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code AssignObject}
-	 * labeled alternative in {@link QueryParser#assignments}.
+	 * Exit a parse tree produced by the {@code StrToBytesFuncExpr}
+	 * labeled alternative in {@link QueryParser#functionalExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignObject(QueryParser.AssignObjectContext ctx);
+	void exitStrToBytesFuncExpr(QueryParser.StrToBytesFuncExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code AssignStats}
 	 * labeled alternative in {@link QueryParser#assignments}.
@@ -284,6 +291,18 @@ public interface QueryListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssignStats(QueryParser.AssignStatsContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code AssignObject}
+	 * labeled alternative in {@link QueryParser#assignments}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignObject(QueryParser.AssignObjectContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code AssignObject}
+	 * labeled alternative in {@link QueryParser#assignments}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignObject(QueryParser.AssignObjectContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Keys}
 	 * labeled alternative in {@link QueryParser#objectField}.

@@ -1,22 +1,3 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
-
 package com.sm.query;
 
 import com.sm.query.Predicate.Operator;
@@ -41,6 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Created by mhsieh on 6/27/15.
+ */
 public class QueryListenerImpl extends QueryBaseListener {
     private static final Log logger = LogFactory.getLog(QueryBaseListener.class);
 
@@ -132,14 +116,23 @@ public class QueryListenerImpl extends QueryBaseListener {
         //System.out.println(ctx.comparisonOperator().getText());
         //boolean isKey = ctx.objectField().getText().equals(KEY) ? true : false;
         String op = ctx.comparisonOperator().getText().equals(EQ) ? IN : ctx.comparisonOperator().getText() ;
+        if ( valueStack.size() == 0) {
+            logger.info("value stack is empty, comparison "+ctx.objectField().getText()+" "+op);
+            return;
+        }
         Result result = valueStack.pop();
         //add predicate impl
         Terminal left = new Terminal( ctx.objectField().getText(), result.getType());
-        Terminal right = new Terminal( result.toString(), result.getType());
+        Terminal right ;
+        if ( result.getType() == Type.ARRAY)
+           right = new Terminal( new String((byte[]) result.getValue()), result.getType());
+        else
+           right = new Terminal( result.toString(), result.getType());
         Condition condition = new Condition(op, left, right);
         predicateStack.push( condition);
         //System.out.println( ctx.objectField().getText()+" "+ctx.comparisonOperator().getText()+" "+ctx.expression().getText());
     }
+
 
     @Override public void enterExpValues(@NotNull QueryParser.ExpValuesContext ctx) { }
 
@@ -147,9 +140,9 @@ public class QueryListenerImpl extends QueryBaseListener {
         //System.out.println(ctx.getText());
         Result result;
         if ( ctx.value() instanceof QueryParser.NumbersContext)
-            result = new Result(Result.Type.NUMBER, ctx.getText());
+            result = new Result(Type.NUMBER, ctx.getText());
         else if ( ctx.value() instanceof QueryParser.StringsContext)
-            result = new Result( Result.Type.STRING, ctx.getText().substring(1, ctx.getText().length() - 1));
+            result = new Result( Type.STRING, ctx.getText().substring(1, ctx.getText().length() - 1));
         else if ( ctx.value() instanceof QueryParser.BooleansContext)
             result = new Result(Type.BOOLEAN, Boolean.valueOf(ctx.getText()));
         else if ( ctx.value() instanceof QueryParser.NullsContext)
@@ -161,6 +154,18 @@ public class QueryListenerImpl extends QueryBaseListener {
         else
             throw new QueryException("result is not Number or String v= "+ctx.getText());
     }
+
+    @Override public void exitStrToBytesFuncExpr(QueryParser.StrToBytesFuncExprContext ctx) {
+        String str = ctx.STRING().getText().substring(1, ctx.STRING().getText().length() - 1);
+        valueStack.push(new Result(str.getBytes()));
+    }
+
+    @Override public void exitFunctionExp(QueryParser.FunctionExpContext ctx) {
+        String op = ctx.getChild(0).getText();
+        if ( op.indexOf("strToBytes(") < 0)
+            valueStack.push( new Result(op));
+    }
+
 
     public Stack<Predicate> getPredicateStack() {
         return predicateStack;
@@ -348,7 +353,7 @@ public class QueryListenerImpl extends QueryBaseListener {
 
     private Predicate combineAnd(Predicate left, Predicate right){
         if ( left.getOperator() == right.getOperator() ) {
-            if ( left.getOperator() == Predicate.Operator.In || left.getOperator() == Predicate.Operator.NotEqual ) {
+            if ( left.getOperator() == Operator.In || left.getOperator() == Operator.NotEqual ) {
                 ArrayList<String> leftList = new ArrayList<String>(Arrays.asList(left.right().getValue().split(TAB)));
                 ArrayList<String> rightList = new ArrayList<String>(Arrays.asList(right.right().getValue().split(TAB)));
                 List<String> list = new ArrayList<String>();
@@ -366,10 +371,10 @@ public class QueryListenerImpl extends QueryBaseListener {
                     return new Condition(left.getValue(), left.left(), terminal);
                 }
             }
-            else if ( left.getOperator() == Predicate.Operator.Greater || left.getOperator() == Predicate.Operator.GreaterEQ) {
+            else if ( left.getOperator() == Operator.Greater || left.getOperator() == Operator.GreaterEQ) {
                 String rs = findMax( left.getType(), left.right().getValue(), right.right().getValue(), left.getOperator() );
                 return new Condition( left.getValue(), left, new Terminal( rs, left.getType()) ) ;
-            } else if ( left.getOperator() == Predicate.Operator.Less || left.getOperator() == Predicate.Operator.LessEQ) {
+            } else if ( left.getOperator() == Operator.Less || left.getOperator() == Operator.LessEQ) {
                 String rs = findMin(left.getType(), left.right().getValue(), right.right().getValue(),left.getOperator() );
                 return new Condition(left.getValue(), left, new Terminal(rs, left.getType()));
             } else {
@@ -482,7 +487,7 @@ public class QueryListenerImpl extends QueryBaseListener {
      */
     private Predicate mergeOr(Predicate left, Predicate right) {
         if ( left.getOperator() == right.getOperator() ) {
-            if ( left.getOperator() == Predicate.Operator.In || left.getOperator() == Predicate.Operator.NotEqual )  {
+            if ( left.getOperator() == Operator.In || left.getOperator() == Operator.NotEqual )  {
                 ArrayList<String> leftList = new ArrayList<String>(Arrays.asList(left.right().getValue().split(TAB)));
                 ArrayList<String> rightList = new ArrayList<String>(Arrays.asList(right.right().getValue().split(TAB)));
                 for ( String each : rightList) {
@@ -492,10 +497,10 @@ public class QueryListenerImpl extends QueryBaseListener {
                 Terminal terminal = new Terminal( fromList(leftList), left.getType());
                 //return new Left predicate to be push to stack
                 return new Condition( left.getValue(), left.left(), terminal );
-            } else if ( left.getOperator() == Predicate.Operator.Greater || left.getOperator() == Predicate.Operator.GreaterEQ) {
+            } else if ( left.getOperator() == Operator.Greater || left.getOperator() == Operator.GreaterEQ) {
                 String rs = findMin( left.getType(), left.right().getValue(), right.right().getValue(), left.getOperator() );
                 return new Condition( left.getValue(), left, new Terminal( rs, left.getType()) ) ;
-            } else if ( left.getOperator() == Predicate.Operator.Less || left.getOperator() == Predicate.Operator.LessEQ) {
+            } else if ( left.getOperator() == Operator.Less || left.getOperator() == Operator.LessEQ) {
                 String rs = findMax(left.getType(), left.right().getValue(), right.right().getValue(),left.getOperator() );
                 return new Condition(left.getValue(), left, new Terminal(rs, left.getType()));
             } else {
@@ -764,7 +769,7 @@ public class QueryListenerImpl extends QueryBaseListener {
             case INT:
             case LONG:
             case NUMBER:
-                if ( comparator == Predicate.Operator.Greater)
+                if ( comparator == Operator.Greater)
                     if ( Long.valueOf(left ) > Long.valueOf( right))
                         return left;
                     else
@@ -776,7 +781,7 @@ public class QueryListenerImpl extends QueryBaseListener {
                         return right;
 
             case STRING:
-                if ( comparator == Predicate.Operator.Greater)
+                if ( comparator == Operator.Greater)
                     if ( left.compareTo(right) > 0)
                         return left;
                     else
@@ -797,7 +802,7 @@ public class QueryListenerImpl extends QueryBaseListener {
             case INT:
             case LONG:
             case NUMBER:
-                if ( comparator == Predicate.Operator.Less)
+                if ( comparator == Operator.Less)
                     if ( Long.valueOf(left ) < Long.valueOf( right))
                         return left;
                     else
@@ -809,7 +814,7 @@ public class QueryListenerImpl extends QueryBaseListener {
                         return right;
 
             case STRING:
-                if ( comparator == Predicate.Operator.Less)
+                if ( comparator == Operator.Less)
                     if ( left.compareTo(right) < 0)
                         return left;
                     else

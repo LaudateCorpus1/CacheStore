@@ -1,29 +1,33 @@
 /*
  *
+ *  * Copyright 2012-2015 Viant.
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  * use this file except in compliance with the License. You may obtain a copy of
+ *  * the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  * License for the specific language governing permissions and limitations under
+ *  * the License.
  *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+ */package com.sm.store;
 
-package com.sm.store;
-
+import com.caucho.hessian.io.External;
+import com.caucho.hessian.io.Hessian2Input;
+import com.caucho.hessian.io.Hessian2Output;
 import com.sm.localstore.impl.HessianSerializer;
+import com.sm.localstore.impl.LocalStoreImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 
 public class T1 implements Serializable {
    private static Log logger = LogFactory.getLog(TestClient.class);
@@ -82,7 +86,7 @@ public class T1 implements Serializable {
         putInt(bs, 0, j);
         putInt(bs, 0, k);
 
-        T1.T2 t2 = new T1.T2("test-10", 20);
+        T2 t2 = new T2("test-10", 20);
         T1 t1 = new T1("test-1",1 , new Integer(4), t2);
         HessianSerializer<T1> hs = new HessianSerializer<T1>();
         String str = new String(hs.toBytes(t1));

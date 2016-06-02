@@ -24,14 +24,14 @@
     <parent>
         <groupId>com.viantinc.cachestore</groupId>
         <artifactId>cachestore</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>transport</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.3</version>
 
-   <dependencies>
-   </dependencies>
+    <dependencies>
+    </dependencies>
 
 </project>

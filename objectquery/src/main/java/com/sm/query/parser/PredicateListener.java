@@ -1,21 +1,4 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+// Generated from /Users/mhsieh/java/dev/query/objectquery/src/main/resources/Predicate.g4 by ANTLR 4.5.1
 package com.sm.query.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -214,6 +197,30 @@ public interface PredicateListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExistListAnd(PredicateParser.ExistListAndContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code BitsOr}
+	 * labeled alternative in {@link PredicateParser#functionalPredicate}.
+	 * @param ctx the parse tree
+	 */
+	void enterBitsOr(PredicateParser.BitsOrContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BitsOr}
+	 * labeled alternative in {@link PredicateParser#functionalPredicate}.
+	 * @param ctx the parse tree
+	 */
+	void exitBitsOr(PredicateParser.BitsOrContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code BitsAnd}
+	 * labeled alternative in {@link PredicateParser#functionalPredicate}.
+	 * @param ctx the parse tree
+	 */
+	void enterBitsAnd(PredicateParser.BitsAndContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BitsAnd}
+	 * labeled alternative in {@link PredicateParser#functionalPredicate}.
+	 * @param ctx the parse tree
+	 */
+	void exitBitsAnd(PredicateParser.BitsAndContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ExpValue}
 	 * labeled alternative in {@link PredicateParser#expression}.

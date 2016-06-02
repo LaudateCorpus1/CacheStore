@@ -1,21 +1,4 @@
-/*
- *
- *
- * Copyright 2012-2015 Viant.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- *  use this file except in compliance with the License. You may obtain a copy of
- *  the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- *  License for the specific language governing permissions and limitations under
- *  the License.
- *
- */
+// Generated from /Users/mhsieh/java/dev/query/objectquery/src/main/resources/Query.g4 by ANTLR 4.5.1
 package com.sm.query.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -61,19 +44,12 @@ public interface QueryVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitWhereStatement(QueryParser.WhereStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code LogicPredicate}
-	 * labeled alternative in {@link QueryParser#predicate}.
+	 * Visit a parse tree produced by the {@code LimitPhrase}
+	 * labeled alternative in {@link QueryParser#limitCause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLogicPredicate(QueryParser.LogicPredicateContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ParenPredicate}
-	 * labeled alternative in {@link QueryParser#predicate}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitParenPredicate(QueryParser.ParenPredicateContext ctx);
+	T visitLimitPhrase(QueryParser.LimitPhraseContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ObjPredicate}
 	 * labeled alternative in {@link QueryParser#predicate}.
@@ -81,6 +57,27 @@ public interface QueryVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitObjPredicate(QueryParser.ObjPredicateContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code LogicPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLogicPredicate(QueryParser.LogicPredicateContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NotPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNotPredicate(QueryParser.NotPredicateContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ParenPredicate}
+	 * labeled alternative in {@link QueryParser#predicate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenPredicate(QueryParser.ParenPredicateContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Comparison}
 	 * labeled alternative in {@link QueryParser#objectPredicate}.
@@ -103,6 +100,20 @@ public interface QueryVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpressionPredicate(QueryParser.ExpressionPredicateContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code FunctionExp}
+	 * labeled alternative in {@link QueryParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionExp(QueryParser.FunctionExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Expr}
+	 * labeled alternative in {@link QueryParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpr(QueryParser.ExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ExpValues}
 	 * labeled alternative in {@link QueryParser#expression}.
 	 * @param ctx the parse tree
@@ -116,20 +127,6 @@ public interface QueryVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpParen(QueryParser.ExpParenContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Expr}
-	 * labeled alternative in {@link QueryParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpr(QueryParser.ExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code FunctionExp}
-	 * labeled alternative in {@link QueryParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionExp(QueryParser.FunctionExpContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code LowerExpr}
 	 * labeled alternative in {@link QueryParser#functionalExpression}.
@@ -166,12 +163,12 @@ public interface QueryVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExistExpr(QueryParser.ExistExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code AssignObject}
-	 * labeled alternative in {@link QueryParser#assignments}.
+	 * Visit a parse tree produced by the {@code StrToBytesFuncExpr}
+	 * labeled alternative in {@link QueryParser#functionalExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignObject(QueryParser.AssignObjectContext ctx);
+	T visitStrToBytesFuncExpr(QueryParser.StrToBytesFuncExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AssignStats}
 	 * labeled alternative in {@link QueryParser#assignments}.
@@ -179,6 +176,13 @@ public interface QueryVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAssignStats(QueryParser.AssignStatsContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code AssignObject}
+	 * labeled alternative in {@link QueryParser#assignments}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignObject(QueryParser.AssignObjectContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Keys}
 	 * labeled alternative in {@link QueryParser#objectField}.
