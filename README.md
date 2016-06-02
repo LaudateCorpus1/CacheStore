@@ -13,6 +13,7 @@ So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.
 * Groovy command line shell
 * Supports plug-ins for heterogeneous storage
 * Server side serialization
+* Map Reduce
 * Currently supports Java and Groovy with other languages coming soon
 
 ## Prerequisites
@@ -76,7 +77,7 @@ To get CacheStore and its modules into your own project add these dependencies t
 
 ## Latest Version
 
-The latest stable version is CacheStore 1.0.2
+The latest stable version is CacheStore 1.0.3
 CacheStore Code Base: https://github.com/viant/CacheStore
 
 ## Copyright and Licensing
