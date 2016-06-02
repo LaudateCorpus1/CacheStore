@@ -25,7 +25,17 @@
             <a id="viant_banner" href="http://viant.github.io/">Viant Engineering</a>
             <h1 id="project_title">CacheStore</h1>
             <!-- TODO: add a randomized quote generator -->
-            <h2 id="project_tagline">"It's freaking fast." - Mickey Hsieh, Creator of CacheStore</h2>
+            <!-- random quote generator implementation -->
+            <h2 id="project_tagline"><script>var r_text = new Array();
+                r_text[0] = "\"It's freaking fast.\" - Mickey Hsieh, Creator of CacheStore";
+                r_text[1] = "\"Make it work is easy, make it right is hard.\" - Mickey Hsieh, Creator of CacheStore";
+                r_text[2] = "\"Simple problem, simple solution.\" - Mickey Hsieh, Creator of CacheStore"
+                r_text[3] = "\"Write code once, use it everywhere.\" - Mickey Hsieh, Creator of CacheStore"
+                r_text[4] = "\"It's freaking fast.\" - Mickey Hsieh, Creator of CacheStore";
+                var i = Math.floor(r_text.length * Math.random());
+                document.write(r_text[i])</script></h2>
+            
+           <!-- <h2 id="project_tagline">"It's freaking fast." - Mickey Hsieh, Creator of CacheStore</h2> -->
 
             <section id="downloads">
                 <a class="folder_link" href="./Downloads.html">
@@ -75,7 +85,7 @@
             </ul>
             <h2>
 <a id="latest-version" class="anchor" href="#latest-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Latest Version</h2>
-            <p>The latest stable version is CacheStore 1.0.2.</p>
+            <p>The latest stable version is CacheStore 1.0.3.</p>
             <p>Head over to the <a href="./Downloads.html">Downloads</a> page to grab the latest version.</p>
             <h2>
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
@@ -122,10 +132,16 @@
                         <li>PHP support in beta and other language support in development.</li>
                     </ul>
                 </li>
+                <li>Map Reduce *NEW*
+                    <ul>
+                        <li>Server-side Map Reduce for both single instance and cluster setups.</li>
+                        <li>Speeds up operations exponentionally with the number of threads.</li>
+                    </ul>
+                </li>
                 <li>New features currently in development.
                     <ul>
                         <li>Option to use a schema in bytes as an alternative to serialization.</li>
-                        <li>Optimization of index search and table scan to utilize a MapReduce model and byte scheme for even faster speed.</li>
+                        <li>Support for gRPC, a modern RPC framework that can run anywhere.</li>
                     </ul>
                 </li>
             </ol>
@@ -213,6 +229,7 @@
                         <li>Store procedures</li>
                         <li>Triggers</li>
                         <li>Bulk operations</li>
+                        <li>Map reducer</li>
                     </ul>
                 </li>
             </ul>

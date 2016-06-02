@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<!-- TODO: create more in page links if needed such as a refrence in one section to another -->
 <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -107,6 +107,9 @@
                         <li>
                             <a href="#queries">Queries</a>
                         </li>
+                        <li>
+                            <a href="#mapreduce">Map Reduce</a>
+                        </li>
                     </ol>
                 </li>
                 <li>
@@ -162,6 +165,9 @@
                                     <a href="#hessian-serialization">Hessian Serialization</a>
                                 </li>
                             </ol>
+                        </li>
+                        <li>
+                            <a href="#mapreduce2">Map Reduce</a>
                         </li>
                     </ol>
                 </li>
@@ -327,10 +333,19 @@
 
             <h3>
 <a id="stored-procedures" class="anchor" href="#stored-procedures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2.4. Stored Procedures</h3>
-            <p>Stored procedures are subroutines stored on servers that can be called by clients. For more information regarding stored procedures in CacheStore, refer to the Stored Procedures section under the Client section below.</p>
+            <p>Stored procedures are subroutines stored on servers that can be called by clients. For more information regarding stored procedures in CacheStore, refer to the <a href="#stored-procedures-2">Stored Procedures</a> section under the Client section below.</p>
             <h3>
 <a id="queries" class="anchor" href="#quesries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2.5. Queries</h3>
             <p>Queries are filtered searches that, like stored procedures, are initiated on the client side, but handled on the servers. More information can be found in the Object Query section under the Client section below.</p>
+            <h3>
+<a id="mapreduce" class="anchor" href="#mapreduce" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2.6. Map Reduce</h3>
+            <p>CacheStore servers all have the ability to use the built in Map Reducer. The <a href="https://en.wikipedia.org/wiki/MapReduce">Map Reduce</a> is implemented through multithreading on each server. A single server will distribute work among the specified thread count. A cluster of servers will already split work among the different servers in the cluster, with each server in the cluster splitting its own work among its different threads specified by the user. After the Map has finished, the Reduce is executed and the results can be combined.</p>
+            <p>
+            The execution of the server-side Map Reduce is similar to how <a href="#stored-procedures-2">Stored Procedures</a> are created and executed. Please refer to the <a href="#mapreduce2">Client-side Map Reduce</a> section for more information.
+            </p>
+            <p>
+                In order to run Map Reduce, you must have the Map Reduce procedure and model object on both the client and the server. In addition, you must have a scan.xml in your config path that contains the stores that defines stores accessible to Map Reduce. The contents of this scan.xml file is defined in the same way that <a href=#stores-xml>stores.xml</a> is and should be a subset of stores.xml. Map Reduce WILL NOT WORK without scan.xml defined.
+            </p>
 
 
             <h2>
@@ -517,11 +532,116 @@ System.out.println(result);</code></pre>
 <a id="serialization" class="anchor" href="#serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.6. Serialization</h3>
             <p>CacheStore supports multiple types of serialization for storing and retrieving objects. It is defaulted to use Hessian, but can be implemented with custom serialization.To specify what kind of serialization to use, change the &lt;className&gt; field in the <a href="#stores-xml">stores.xml File</a>. Serialization must occur on both the server and client side so the serializer must be present on both ends.
             </p>
-            <h3>
-<a id="hessian-serialization" class="anchor" href="#hessian-serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.6.1. Hessian Serialization</h3>
+            <h4>
+<a id="hessian-serialization" class="anchor" href="#hessian-serialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.6.1. Hessian Serialization</h4>
             <p>The default Hessian serialization is included in the CacheStore package. More information on Hessian Serialization can be found <a hfref=http://hessian.caucho.com>Here</a>.
 
             </p>
+            <h3>
+<a id="mapreduce2" class="anchor" href="#mapreduce2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.7. Map Reduce</h3>
+            <p>Exection of the Map Reduce from the client-side is the same as executing a <a href="#stored-procedures-2">Stored Procedure</a>. The only difference is the implementation of the Stored Procedure, in this case by implementing MapReduce in addition to StoreMap.
+            </p>
+            <p>The following is an implementation of the Map Reduce Stored Procedure, an example model (Value) it uses, and an Invoker call to execute it.</p>
+            <pre><code>
+public class AggregateMR implements StoreMap, MapReduce&lt;Value&gt; {
+    Map&lt;String&gt;, RemoteStore> storeMaps;
+    Serializer serializer = new HessianSerializer();
+    public Value aggregate(String store, int threadCount) {
+        ExecMapReduce execMapReduce = new ExecMapReduce(storeMaps, Value.class, this, serializer);
+        Value ag = (Value) execMapReduce.execute(store, threadCount);
+        return ag;
+    }
+    @Override
+    public void beforeMapStart(Value record, int taskNo, Map&lt;String, Object&gt; context) {
+    //Do something before map starts
+    }
+
+    @Override
+    public void map(Pair&lt;Key, Object&gt; pair, Value record, Map&lt;String, Object&gt; map) {
+        record.count();
+    }
+
+    @Override
+    public void afterMapComplete(Value record, int taskNo, Map&lt;String, Object&gt; context) {
+    //Do something after map completes
+    }
+
+    @Override
+    public Value reduce(List&lt;Value&gt; list) {
+        System.out.println("reduce");
+        Value total = new Value();
+        for(Value each:list){
+            total.addCount(each.getCount());
+        }
+        total.setTotal(total.count);
+        return total;
+    }
+    
+    @Override
+    public void setStoreMap(ConcurrentMap&lt;String, RemoteStore&gt; storeMaps) {
+        this.storeMaps = storeMaps;
+    }
+}
+            </code></pre>
+            <p>
+            The Map Reduce is executed with execMapReduce. The Map Reduce functions do exactly what they say. beforeMapStart occurs before the map starts, map is the map function, afterMapComplete occurs after the map, and reduce is the reduce function that happens after all the map functions finish.
+            </p>
+            <pre><code>
+public class Value implements Serializable {
+    int count ;
+    int total ;
+
+    public Value() { }
+
+    public Value(int count, int total) {
+        this.count = count;
+        this.total = total;
+    }
+
+    public void count() {
+        count++;
+    }
+    public  void addCount(int count) {
+        this.count += count;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+    
+
+    @Override
+    public String toString() {
+        return "Value{" +
+                "count=" + count +
+                ", total=" + total +
+                '}';
+    }
+}
+            </code></pre>
+            <p>
+            The Map Reduce can be implemented however it is needed, but this example shows Value as being a simple aggregate counter.
+            </p>
+            <pre><code>
+Invoker invoker = new Invoker("com.cachestore.example.AggregateMR", "aggregate", new Object[] {"workers", 2} );
+Object object = client.invoke(invoker);
+            </code></pre>
+            <p>
+                The Map Reduce is called client-side the same way <a href=#stored-procedures-2>Stored Procedures</a> are. The Map Reduce and model object(s) must be on both the client and server when executing.
+            </p>
+
 
 
             <h2>
