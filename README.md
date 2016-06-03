@@ -47,7 +47,7 @@ To get CacheStore and its modules into your own project add these dependencies t
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
         <artifactId>client</artifactId>
-        <version>1.5.6</version>
+        <version>1.6.0</version>
     </dependency>
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
@@ -77,7 +77,7 @@ To get CacheStore and its modules into your own project add these dependencies t
 
 ## Latest Version
 
-The latest stable version is CacheStore 1.0.3
+The latest stable version is CacheStore 1.1.0
 CacheStore Code Base: https://github.com/viant/CacheStore
 
 ## Copyright and Licensing

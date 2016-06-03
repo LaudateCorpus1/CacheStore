@@ -30,7 +30,7 @@ import static voldemort.store.cachestore.BlockUtil.checkPath;
 
 public class TestFileStore {
 
-    ////@Test(groups = {"stores"})
+    //////@Test(groups = {"stores"})
     public void testStore() {
         checkPath("./data");
         FileStore fileStore = new FileStore("./data", "test");
@@ -59,7 +59,7 @@ public class TestFileStore {
         }
     }
 
-    ////@Test(groups = "files")
+    //////@Test(groups = "files")
     public void testIterator() {
         StoreIterator storeIterator = new StoreIterator("/Users/mhsieh/test/log/concurrents.0");
         HessianSerializer serializer = new HessianSerializer();

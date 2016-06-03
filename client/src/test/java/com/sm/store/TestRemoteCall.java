@@ -59,9 +59,19 @@ public class TestRemoteCall {
 
     //@Test(groups ="{Select}")
     public void testSelect(){
-        RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "userCrm", false, 900000L);
-        String str = client.query4Json("select country from User where key# = strToBytes(\"country\")  ");
+        RemoteClientImpl client = new NTRemoteClientImpl("localhost:7100", null, "store", false, 900000L);
+        String str = client.query4Json("select * from Person where key# >= 1 and key# <= 10 ");
         System.out.println( "query result :"+str);
+        client.close();
+        ScanClientImpl scanClient = new ScanClientImpl("localhost:7100", null, "store");
+        List<Key> list = new ArrayList<Key>();
+        for ( int i = 0; i < 10; i ++) {
+            list.add(Key.createKey(i));
+        }
+        List<KeyValue> lst = scanClient.multiGets(list);
+        System.out.println( lst.size()+" lst "+lst.toString() );
+        List<KeyValue> lst2 = scanClient.multiPuts( lst);
+        System.out.println( lst2.size()+" lst2 "+lst.toString() );
 //        Person.Address address = new Person.Address( new Person.Street(4813, "corsica dr"), 90630, "cypress");
 //        Person person = new Person("mickey", 30, 4000.00, true, null);
 //        String queryStr = "select  address.zip , name, age, male, address.city, address.street from Person where address.zip > 90320 ";

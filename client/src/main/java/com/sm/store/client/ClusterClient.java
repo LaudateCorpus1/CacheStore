@@ -593,7 +593,7 @@ public class ClusterClient implements ScanPersistence {
         if ( keyClusterList.size() == 0) throw new RuntimeException("keyCluster size = 0, keys size "+keys.size());
         //try to rebalance the size of key for each node
         List<KeyCluster> kcList = rebalance( keyClusterList) ;
-        return executeStoreProc(invoker, kcList, true, (queryStr == null ) ? "" : queryStr);
+        return executeStoreProc(invoker, kcList, true, queryStr );
     }
 
     protected List<KeyCluster> rebalance(List<KeyCluster> list) {
@@ -662,7 +662,7 @@ public class ClusterClient implements ScanPersistence {
             Invoker iv = new Invoker( invoker.getClassName(), invoker.getMethod(), invoker.getParams());
             if ( addKey) {
                 iv.addParas(keyClusterList.get(i).getKeyList());
-                if ( queryStr != null)
+                if ( queryStr != null )
                     iv.addParas(queryStr);
             }
             //create cluster from new invoker instance

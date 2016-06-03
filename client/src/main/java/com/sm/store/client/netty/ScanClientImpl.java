@@ -22,6 +22,7 @@ import com.sm.message.Response;
 import com.sm.storage.Serializer;
 import com.sm.store.*;
 import com.sm.store.client.RemoteClientImpl;
+import com.sm.store.client.RemoteValue;
 import com.sm.transport.netty.TCPClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -169,14 +170,29 @@ public class ScanClientImpl extends RemoteClientImpl implements ScanPersistence 
     public List<KeyValue> multiGets(List<Key> keys) {
         KeyParas keyParas = new KeyParas(OpType.MultiGets, keys);
         Request request = createRequest( embeddedSerializer.toBytes(keyParas), Request.RequestType.Scan);
+        return sendMultiGetRequest( request);
+    }
+
+
+    private List<KeyValue> sendMultiGetRequest(Request request) {
         try {
             Response response = sendRequest( request );
             if ( ! response.isError()) {
                 List<KeyValue> list = ((KeyValueParas) response.getPayload()).getList();
-                return list;
+                //deserialize the value before it return
+                List<KeyValue> toReturn = new ArrayList<KeyValue>(list.size());
+                for ( KeyValue each : list) {
+                    try {
+                        toReturn.add( new KeyValue( each.getKey(), new RemoteValue(
+                                serializer.toObject( (byte[]) each.getValue().getData()), each.getValue().getVersion(), each.getValue().getNode() ))) ;
+                    } catch ( Exception ex) {
+                        logger.error("fail to deserialize for key "+each.getKey().getKey().toString());
+                    }
+                }
+                return toReturn;
             }
             else {
-               logger.error( (String) response.getPayload());
+                logger.error( (String) response.getPayload());
                 return null ;
             }
 
@@ -189,8 +205,7 @@ public class ScanClientImpl extends RemoteClientImpl implements ScanPersistence 
     public List <KeyValue> multiSelectQuery(List<Key> keys, String queryStr) {
         KeyParas keyValueParas =  new KeyParas(OpType.MultiSelectQuery, keys, queryStr);
         Request request = createRequest( embeddedSerializer.toBytes(keyValueParas), Request.RequestType.Scan);
-        Response response = sendRequest( request );
-        return ((KeyValueParas) response.getPayload()).getList();
+        return sendMultiGetRequest( request);
     }
 
     private KeyValueParas makeKeyValueParas(List<Key> keys, String queryStr, OpType optye) {

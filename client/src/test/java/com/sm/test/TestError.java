@@ -48,14 +48,8 @@ public class TestError {
         ArrayList<String> list = new ArrayList<String>(Arrays.asList( "1","2","3","4","5") );
         ArrayList<String> alist = new ArrayList<String>(Arrays.asList( "1","2","3" ));
         int j = list.size();
-
         list.removeAll(alist);
         System.out.println(list.toString()+ " alist "+alist);
-//        for ( int i =0 ; i < j ; i++) {
-//            //list.remove( each);
-//            System.out.println("list "+ list.get(i) +" " +list.toString());
-//            list.remove(i);
-//        }
         String strToBytes = "strToBytes(\"00005d29e7918b7c9460a4c8496b8640\")";
         String[] splits = strToBytes.split("\"");
         System.out.println(splits[1].getBytes());
@@ -95,7 +89,6 @@ public class TestError {
                 logger.error(ex.getMessage(), ex);
             }
         }
-
         testClient.client.close();
         ccf.close();
     }
