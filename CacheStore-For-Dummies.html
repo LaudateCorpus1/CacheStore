@@ -544,7 +544,7 @@ System.out.println(result);</code></pre>
             <p>The following is an implementation of the Map Reduce Stored Procedure, an example model (Value) it uses, and an Invoker call to execute it.</p>
             <pre><code>
 public class AggregateMR implements StoreMap, MapReduce&lt;Value&gt; {
-    Map&lt;String&gt;, RemoteStore> storeMaps;
+    Map&lt;String, RemoteStore&gt; storeMaps;
     Serializer serializer = new HessianSerializer();
     public Value aggregate(String store, int threadCount) {
         ExecMapReduce execMapReduce = new ExecMapReduce(storeMaps, Value.class, this, serializer);
@@ -792,7 +792,7 @@ fi</code></pre>
             <pre><code>    &lt;dependency&gt;
         &lt;groupId>com.viantinc.cachestore&lt;/groupId&gt;
         &lt;artifactId&gt;cachestore&lt;/artifactId&gt;
-        &lt;version&gt;1.0.3&lt;/version&gt;
+        &lt;version&gt;1.1.0&lt;/version&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;com.viantinc.cachestore&lt;/groupId&gt;
