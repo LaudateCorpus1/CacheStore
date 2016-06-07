@@ -464,7 +464,7 @@ scanCursor = client.nextCursor(scanCursor);
 System.out.println("ScanCursor next: "+scanCursor.getKeyValueList());
 client.closeCursor(scanCursor);</code></pre>
             <p>A simple use of cluster cursors:</p>
-            <pre><code>ClusterClient.ClusterCursor keyCursor = client.openKeyCursor((short) 1000); //null pointer exception
+            <pre><code>ClusterClient.ClusterCursor keyCursor = client.openKeyCursor((short) 1000);
 System.out.println("KeyCursor: "+keyCursor.getResult());
 keyCursor = client.nextCursor(keyCursor);
 System.out.println("KeyCursor: "+keyCursor.getResult());
