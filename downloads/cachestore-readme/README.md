@@ -1,5 +1,5 @@
 ## What is CacheStore?
-CacheStore is a key-value hybrid storage system between memory cache and disk. It is high performance, horizontal scale and high availability. It was initially developed to support real time auction and high performance ad serving systems.
+CacheStore is a key-value hybrid storage system between memory cache and disk. It is high performance, horizontally scalable, and high availability. It was initially developed to support real time auction and high performance ad serving systems.
 
 So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.github.io/CacheStore/)
 
@@ -13,6 +13,7 @@ So why choose CacheStore? Take a look at our website: [CacheStore](http://viant.
 * Groovy command line shell
 * Supports plug-ins for heterogeneous storage
 * Server side serialization
+* Map Reduce
 * Currently supports Java and Groovy with other languages coming soon
 
 ## Prerequisites
@@ -40,28 +41,23 @@ To get CacheStore and its modules into your own project add these dependencies t
 
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>cachestore</artifactId>
-        <version>1.0.2</version>
+        <artifactId>cachestore-client</artifactId>
+        <version>1.6.0</version>
     </dependency>
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>client</artifactId>
-        <version>1.5.2</version>
+        <artifactId>cachestore-core</artifactId>
+        <version>1.2.5</version>
     </dependency>
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>core</artifactId>
-        <version>1.1.8</version>
-    </dependency>
-    <dependency>
-        <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>server</artifactId>
-        <version>1.4.10</version>
+        <artifactId>cachestore-server</artifactId>
+        <version>1.6.5</version>
     </dependency>
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
         <artifactId>objectquery</artifactId>
-        <version>1.3.7</version>
+        <version>1.5.8</version>
     </dependency>
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
@@ -71,12 +67,12 @@ To get CacheStore and its modules into your own project add these dependencies t
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
         <artifactId>transport</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.3</version>
     </dependency>
 
 ## Latest Version
 
-The latest stable version is CacheStore 1.0.2
+The latest stable version is CacheStore 1.1.0
 CacheStore Code Base: https://github.com/viant/CacheStore
 
 ## Copyright and Licensing
@@ -90,6 +86,6 @@ The source code is available under the Apache 2.0 license. We are actively looki
 
 [Open-source Admin: Lester Pi supervised by Mike Yang and Mickey Hsieh]
 
-[CacheStore Website: Lester Pi supervised by the Viant Data Engineering Team ]
+[CacheStore Website: Lester Pi supervised by the Viant Engineering Team ]
 
-[QA/Test: Viant Data Engineering Team]
+[QA/Test: Viant Engineering Team]
