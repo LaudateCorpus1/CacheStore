@@ -41,22 +41,17 @@ To get CacheStore and its modules into your own project add these dependencies t
 
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>cachestore</artifactId>
-        <version>1.1.0</version>
-    </dependency>
-    <dependency>
-        <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>client</artifactId>
+        <artifactId>cachestore-client</artifactId>
         <version>1.6.0</version>
     </dependency>
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>core</artifactId>
+        <artifactId>cachestore-core</artifactId>
         <version>1.2.5</version>
     </dependency>
     <dependency>
         <groupId>com.viantinc.cachestore</groupId>
-        <artifactId>server</artifactId>
+        <artifactId>cachestore-server</artifactId>
         <version>1.6.5</version>
     </dependency>
     <dependency>
