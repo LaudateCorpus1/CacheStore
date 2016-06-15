@@ -69,6 +69,16 @@ To get CacheStore and its modules into your own project add these dependencies t
         <artifactId>transport</artifactId>
         <version>2.2.3</version>
     </dependency>
+    <dependency>
+        <groupId>com.viantinc.voldemort</groupId>
+        <artifactId>cachestore-storage</artifactId>
+        <version>4.0.4</version>
+    </dependency>
+    <dependency>
+        <groupId>com.viantinc</groupId>
+        <artifactId>hessian-sm</artifactId>
+        <version>4.1.0</version>
+    </dependency>
 
 ## Latest Version
 
