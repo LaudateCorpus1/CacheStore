@@ -396,7 +396,7 @@ Value&lt;ByteArray&gt; value = client.get(k);</code></pre>
             <p>CacheStore supports a bulk (also known as multiOperation) system that allows users to easily and quickly get/put/remove keys and values. Keep in mind that multiOperations take in a query String as one of the parameters, but this parameter can also be null. Query String syntax can be found at: <a href=./Object-Query.html> Object Query Guide</a>.</p>
             <p>The following is an example of multiGets, multiPuts, and multiRemoves:</p>
             <pre><code>List&lt;KeyValue&gt; mGet = client.multiGets(keyList);
-client.multiRemove(keyList);
+client.multiRemoves(keyList);
 client.multiPuts(mGet);</code></pre>
             <h4>
 <a id="object-query" class="anchor" href="#object-query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3.4.4. Object Query</h4>
